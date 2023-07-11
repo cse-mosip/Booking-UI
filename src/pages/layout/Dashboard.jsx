@@ -3,13 +3,22 @@ import {Button, Grid, Container} from '@mui/material';
 import {useNavigate} from "react-router-dom";
 
 
-const Dashboard = (history) => {
+const Dashboard = () => {
     const navigate = useNavigate();
 
     const handleAddBooking = () => {
-        // Redirect to BookingContainer
-        navigate('/booking');
+        navigate('/book');
     };
+    const handleViewBookings = () => {
+        navigate('/bookings');
+    };
+    const handleAddNewResource = () => {
+        navigate('/addresource');
+    };
+
+    const handleViewResource = () => {
+        navigate('/viewresources');
+    }
 
     return (
         <Container style={{height: '100vh', display: 'flex', alignItems: 'center'}}>
@@ -29,6 +38,7 @@ const Dashboard = (history) => {
                     <Button
                         variant="contained"
                         color="primary"
+                        onClick={handleViewBookings}
                         style={{width: '100%'}}
                         title="Click to view the list of bookings"
                     >
@@ -39,6 +49,7 @@ const Dashboard = (history) => {
                     <Button
                         variant="contained"
                         color="primary"
+                        onClick={handleAddNewResource}
                         style={{width: '100%'}}
                         title="Click to add a new resource"
                     >
@@ -49,6 +60,7 @@ const Dashboard = (history) => {
                     <Button
                         variant="contained"
                         color="primary"
+                        onClick={handleViewResource}
                         style={{width: '100%'}}
                         title="Click to view and edit existing resources list"
                     >
