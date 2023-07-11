@@ -1,62 +1,132 @@
-import * as React from 'react';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+import React, { useState } from "react";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 
 export default function UserInformationForm() {
+  const [userType, setUserType] = useState("student");
+  const [userId, setUserId] = useState("");
+  const [teacherId, setTeacherId] = useState("");
+  const [adminId, setAdminId] = useState("");
+  const [occupants, setOccupants] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    switch (name) {
+      case "userType":
+        setUserType(value);
+        break;
+      case "userId":
+        setUserId(value);
+        break;
+      case "teacherId":
+        setTeacherId(value);
+        break;
+      case "adminId":
+        setAdminId(value);
+        break;
+      case "occupants":
+        setOccupants(value);
+        break;
+      case "additionalInfo":
+        setAdditionalInfo(value);
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Payment method
+        User Information
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <TextField
+            select
             required
-            id="cardName"
-            label="Name on card"
+            id="userType"
+            name="userType"
+            label="User Type"
             fullWidth
-            autoComplete="cc-name"
+            value={userType}
+            onChange={handleChange}
             variant="standard"
-          />
+          >
+            <MenuItem value="student">Student</MenuItem>
+            <MenuItem value="teacher">Teacher</MenuItem>
+            <MenuItem value="admin">Admin</MenuItem>
+          </TextField>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
+        {userType === "student" && (
+          <Grid item xs={12} md={6}>
+            <TextField
+              required
+              id="userId"
+              name="userId"
+              label="Registration ID"
+              fullWidth
+              value={userId}
+              onChange={handleChange}
+              variant="standard"
+            />
+          </Grid>
+        )}
+        {userType === "teacher" && (
+          <Grid item xs={12} md={6}>
+            <TextField
+              required
+              id="teacherId"
+              name="teacherId"
+              label="Teacher's ID"
+              fullWidth
+              value={teacherId}
+              onChange={handleChange}
+              variant="standard"
+            />
+          </Grid>
+        )}
+        {userType === "admin" && (
+          <Grid item xs={12} md={6}>
+            <TextField
+              required
+              id="adminId"
+              name="adminId"
+              label="Admin ID"
+              fullWidth
+              value={adminId}
+              onChange={handleChange}
+              variant="standard"
+            />
+          </Grid>
+        )}
+        <Grid item xs={6}>
+        <TextField
             required
-            id="cardNumber"
-            label="Card number"
+            id="occupants"
+            name="occupants"
+            label="Number of Occupants"
             fullWidth
-            autoComplete="cc-number"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            required
-            id="expDate"
-            label="Expiry date"
-            fullWidth
-            autoComplete="cc-exp"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            required
-            id="cvv"
-            label="CVV"
-            helperText="Last three digits on signature strip"
-            fullWidth
-            autoComplete="cc-csc"
+            value={occupants}
+            onChange={handleChange}
             variant="standard"
           />
         </Grid>
         <Grid item xs={12}>
-          <FormControlLabel
-            control={<Checkbox color="secondary" name="saveCard" value="yes" />}
-            label="Remember credit card details for next time"
+          
+          <TextField
+            id="additionalInfo"
+            name="additionalInfo"
+            label="Additional Information"
+            fullWidth
+            multiline
+            rows={4}
+            value={additionalInfo}
+            onChange={handleChange}
+            variant="standard"
           />
         </Grid>
       </Grid>

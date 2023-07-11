@@ -1,49 +1,58 @@
-import * as React from 'react';
-import Typography from '@mui/material/Typography';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Grid from '@mui/material/Grid';
-
-const products = [
-  {
-    name: 'Product 1',
-    desc: 'A nice thing',
-    price: '$9.99',
-  },
-  {
-    name: 'Product 2',
-    desc: 'Another thing',
-    price: '$3.45',
-  },
-  {
-    name: 'Product 3',
-    desc: 'Something else',
-    price: '$6.51',
-  },
-  {
-    name: 'Product 4',
-    desc: 'Best thing of all',
-    price: '$14.11',
-  },
-  { name: 'Shipping', desc: '', price: 'Free' },
-];
-const addresses = ['1 MUI Drive', 'Reactville', 'Anytown', '99999', 'USA'];
-const payments = [
-  { name: 'Card type', detail: 'Visa' },
-  { name: 'Card holder', detail: 'Mr John Smith' },
-  { name: 'Card number', detail: 'xxxx-xxxx-xxxx-1234' },
-  { name: 'Expiry date', detail: '04/2024' },
-];
+import React, { useState, useEffect } from "react";
+import Typography from "@mui/material/Typography";
+import List from "@mui/material/List";
+import Grid from "@mui/material/Grid";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import TextField from "@mui/material/TextField";
+import termsText from "./terms.txt";
 
 export default function Review() {
+  const [termsAndConditions, setTermsAndConditions] = useState("");
+
+  // useEffect(() => {
+  //   fetch("/terms")
+  //     .then((response) => response.text())
+  //     .then((data) => {
+  //       setTermsAndConditions(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error reading terms.txt:", error);
+  //     });
+  // }, []);
+
+  useEffect(() => {
+    // Read the terms.txt file
+    const readTerms = async () => {
+      try {
+        const response = await fetch(termsText);
+        const data = await response.text();
+        setTermsAndConditions(data);
+      } catch (error) {
+        console.error("Error reading terms.txt:", error);
+      }
+    };
+
+    readTerms();
+  }, []);
+
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Order summary
+        Booking summary
       </Typography>
-      <List disablePadding>
-        {products.map((product) => (
+      <Typography gutterBottom>
+        Reource Selected: Level 1 Lab, Department of Computer Science
+      </Typography>
+      <Typography gutterBottom>Date: 20/08/2023</Typography>
+      <Typography gutterBottom>
+        I would like to book the CS department's level 1 lab for the semester 1
+        students' practical session on module CS1012.
+      </Typography>
+      <Typography gutterBottom>Duration: 2 hrs</Typography>
+      <Typography gutterBottom>Attachments:</Typography>
+      {/* <List disablePadding>
+        {userDetails.map((product) => (
           <ListItem key={product.name} sx={{ py: 1, px: 0 }}>
             <ListItemText primary={product.name} secondary={product.desc} />
             <Typography variant="body2">{product.price}</Typography>
@@ -55,31 +64,36 @@ export default function Review() {
             $34.06
           </Typography>
         </ListItem>
-      </List>
+      </List> */}
+      <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+        User Info
+      </Typography>
+      <Typography gutterBottom>Name: Nethum Lamahewage</Typography>
+      <Typography gutterBottom>Index: 190123A</Typography>
+      <Typography gutterBottom>
+        Department of Computer Science and Engineering, Faculty of Engineering
+      </Typography>
+      <Typography gutterBottom>Mobile Number: 0712203412</Typography>
+      <Typography gutterBottom>
+        Address: 324/B, Amal road, Baracuda, Gallface
+      </Typography>
+      {/* <Typography gutterBottom>{resourceDetails.join(", ")}</Typography> */}
+
+      <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+        Terms and Conditions
+      </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-            Shipping
-          </Typography>
-          <Typography gutterBottom>John Smith</Typography>
-          <Typography gutterBottom>{addresses.join(', ')}</Typography>
-        </Grid>
-        <Grid item container direction="column" xs={12} sm={6}>
-          <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-            Payment details
-          </Typography>
-          <Grid container>
-            {payments.map((payment) => (
-              <React.Fragment key={payment.name}>
-                <Grid item xs={6}>
-                  <Typography gutterBottom>{payment.name}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography gutterBottom>{payment.detail}</Typography>
-                </Grid>
-              </React.Fragment>
-            ))}
-          </Grid>
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            multiline
+            rows={6}
+            variant="outlined"
+            InputProps={{
+              readOnly: true,
+            }}
+            value={termsAndConditions}
+          />
         </Grid>
       </Grid>
     </React.Fragment>
