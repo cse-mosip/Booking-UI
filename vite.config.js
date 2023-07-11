@@ -13,6 +13,11 @@ export default defineConfig({
     tsconfigPaths(),
     svgrPlugin({ icon: true }),
   ],
+  resolve: {
+    alias: {
+      src: "/src",
+    },
+  },
   build: {
     outDir: "build",
   },
