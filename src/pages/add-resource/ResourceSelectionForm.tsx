@@ -12,6 +12,8 @@ export default function ResourceSelectionForm(
     props.setResourceName;
   const setResourceCount: React.Dispatch<React.SetStateAction<number>> =
     props.setResourceCount;
+  const resourceNameError: string = props.resourceNameError;
+  const resourceCountError: string = props.resourceCountError;
 
   const handleResourceNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -42,6 +44,8 @@ export default function ResourceSelectionForm(
             variant="standard"
             onChange={handleResourceNameChange}
             value={resourceName}
+            error={resourceNameError !== ""}
+            helperText={resourceNameError}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -56,6 +60,8 @@ export default function ResourceSelectionForm(
             type="number"
             onChange={handleResourceCountChange}
             value={resourceCount}
+            error={resourceCountError !== ""}
+            helperText={resourceCountError}
           />
         </Grid>
       </Grid>

@@ -17,6 +17,7 @@ import Review from "./Review";
 import { Avatar, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
+import * as yup from "yup";
 
 function Copyright() {
   return (
@@ -33,6 +34,21 @@ function Copyright() {
 
 const steps = ["Add new Resource", "Review"];
 
+const resourceNameValidationSchema = yup.object({
+  resourceName: yup
+    .string()
+    .required("Resource Name is required")
+    .label("Resource Name"),
+});
+
+const resourceCountValidationSchema = yup.object({
+  resourceCount: yup
+    .number()
+    .min(1)
+    .required("Resource Count is required")
+    .label("Resource Count"),
+});
+
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
@@ -41,6 +57,8 @@ export default function AddNewResourceContainer() {
   const [resourceName, setResourceName] = useState("");
   const [resourceCount, setResourceCount] = useState(1);
   const [successful, setSuccessful] = useState(false);
+  const [resourceNameError, setResourceNameError] = useState("");
+  const [resourceCountError, setResourceCountError] = useState("");
 
   function getStepContent(step: number) {
     switch (step) {
@@ -51,6 +69,8 @@ export default function AddNewResourceContainer() {
             resourceCount={resourceCount}
             setResourceName={setResourceName}
             setResourceCount={setResourceCount}
+            resourceNameError={resourceNameError}
+            resourceCountError={resourceCountError}
           />
         );
       case 1:
@@ -62,21 +82,57 @@ export default function AddNewResourceContainer() {
     }
   }
 
-  const handleNext = () => {
+  const validateResourceName = async () => {
+    try {
+      await resourceNameValidationSchema.validate(
+        { resourceName },
+        { abortEarly: false }
+      );
+      setResourceNameError("");
+      return true;
+    } catch (err: any) {
+      setResourceNameError(err.errors[0]);
+      return false;
+    }
+  };
+
+  const validateResourceCount = async () => {
+    try {
+      await resourceCountValidationSchema.validate(
+        { resourceCount },
+        { abortEarly: false }
+      );
+      setResourceCountError("");
+      return true;
+    } catch (err: any) {
+      setResourceCountError(err.errors[0]);
+      return false;
+    }
+  };
+
+  const validate = async () => {
+    const resourceNameValid = await validateResourceName();
+    const resourceCountValid = await validateResourceCount();
+    return resourceNameValid && resourceCountValid;
+  };
+
+  const handleNext = async () => {
     switch (activeStep) {
       case 0:
-        console.log("Next - Create Resource");
+        const valid = await validate();
+        if (valid) {
+          setActiveStep(activeStep + 1);
+        }
         break;
       case 1:
         // TODO: call API to create resource
         setSuccessful(true);
         console.log("Resource created");
+        setActiveStep(activeStep + 1);
         break;
       default:
         throw new Error("Unknown step");
     }
-
-    setActiveStep(activeStep + 1);
   };
 
   const handleBack = () => {
