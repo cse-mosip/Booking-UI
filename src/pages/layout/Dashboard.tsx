@@ -1,9 +1,8 @@
 import React from 'react';
 import {Button, Grid, Container} from '@mui/material';
 import {useNavigate} from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
-import { removeResources, enqueueResources } from 'src/redux/resource/actions';
-
+import {useDispatch, useSelector} from 'react-redux';
+import {removeResources, enqueueResources} from 'src/redux/resource/actions';
 
 
 const Dashboard = () => {
@@ -23,6 +22,11 @@ const Dashboard = () => {
     const handleViewResource = () => {
         navigate('/viewresources');
     }
+
+    const handleLogin = () => {
+        navigate('/login');
+    };
+
 
     const resources = [
         {
@@ -44,6 +48,16 @@ const Dashboard = () => {
     return (
         <Container style={{height: '100vh', display: 'flex', alignItems: 'center'}}>
             <Grid container spacing={2} justifyContent="center">
+                <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleLogin}
+                    style={{width: '100%'}}
+                    title="Click to go to the login page"
+                >
+                    Login
+                </Button>
+
                 <Grid item xs={6} sm={3}>
                     <Button
                         variant="contained"
