@@ -72,9 +72,13 @@ const deleteBooking = async (bookingId: number) => {
   }
 };
 
-const updateBookingStatus = async (bookingId: number) => {
+const updateBookingStatus = async (bookingId: number, status: string) => {
+  const bookingStatus = { status: status };
   try {
-    const response = await axios.put(`/bookings/${bookingId}/status`);
+    const response = await axios.patch(
+      `/bookings/${bookingId}/status`,
+      bookingStatus
+    );
     return response.data;
   } catch (error) {
     // Handle error
