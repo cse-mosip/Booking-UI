@@ -12,12 +12,12 @@ const getBookings = async () => {
 };
 
 const bookResource = async (
-  username: any,
-  resourceId: any,
-  reason: any,
-  count: any,
-  startDateTime: any,
-  endDateTime: any
+  username: string,
+  resourceId: number,
+  reason: string,
+  count: number,
+  startDateTime: string,
+  endDateTime: string
 ) => {
   const bookingData = {
     username: username,
@@ -37,7 +37,7 @@ const bookResource = async (
   }
 };
 
-const findBookingById = async (bookingId: any) => {
+const findBookingById = async (bookingId: number) => {
   try {
     const response = await axios.get(`/bookings/${bookingId}`);
     return response.data;
@@ -48,7 +48,7 @@ const findBookingById = async (bookingId: any) => {
   }
 };
 
-const getBookedTimeSlots = async (resourceId: any, date: any) => {
+const getBookedTimeSlots = async (resourceId: number, date: string) => {
   try {
     const response = await axios.get(
       `/bookings?resource_id=${resourceId}&date=${date}`
@@ -61,7 +61,7 @@ const getBookedTimeSlots = async (resourceId: any, date: any) => {
   }
 };
 
-const deleteBooking = async (bookingId: any) => {
+const deleteBooking = async (bookingId: number) => {
   try {
     const response = await axios.delete(`/bookings/${bookingId}`);
     return response.data;
@@ -72,7 +72,7 @@ const deleteBooking = async (bookingId: any) => {
   }
 };
 
-const updateBookingStatus = async (bookingId: any) => {
+const updateBookingStatus = async (bookingId: number) => {
   try {
     const response = await axios.put(`/bookings/${bookingId}/status`);
     return response.data;

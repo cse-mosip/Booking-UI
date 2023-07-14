@@ -11,7 +11,7 @@ const getResources = async () => {
   }
 };
 
-const createResource = async (resourceName: any, resourceCount: any) => {
+const createResource = async (resourceName: string, resourceCount: number) => {
   const resourceData = { name: resourceName, count: resourceCount };
   try {
     const response = await axios.post("/resources", resourceData);
@@ -23,7 +23,7 @@ const createResource = async (resourceName: any, resourceCount: any) => {
   }
 };
 
-const getResourceById = async (id: any) => {
+const getResourceById = async (id: number) => {
   try {
     const response = await axios.get(`/resources/${id}`);
     return response.data;
@@ -34,7 +34,7 @@ const getResourceById = async (id: any) => {
   }
 };
 
-const deleteResource = async (id: any) => {
+const deleteResource = async (id: number) => {
   try {
     const response = await axios.delete(`/resources/${id}`);
     return response.data;

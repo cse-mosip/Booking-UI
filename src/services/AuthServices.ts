@@ -1,6 +1,6 @@
 import axios from "src/services/HttpServices";
 
-const login = async (username: any, password: any) => {
+const login = async (username: string, password: string) => {
   const data = {
     username,
     password,
@@ -16,7 +16,7 @@ const login = async (username: any, password: any) => {
   }
 };
 
-const logout = async (username: any, token: any) => {
+const logout = async (username: string, token: string) => {
   const data = {
     username,
     token,
