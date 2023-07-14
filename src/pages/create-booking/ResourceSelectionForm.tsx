@@ -6,12 +6,11 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import {MenuItem} from '@mui/material';
-import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
-import {DateTimePicker} from '@mui/x-date-pickers/DateTimePicker';
-import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import InputAdornment from '@mui/material/InputAdornment';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -25,7 +24,6 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
     const [acceptResourceBooking, setAcceptResourceBooking] = useState(false);
     const [attachment, setAttachment] = useState(null);
     const [bookingDate, setBookingDate] = useState(null);
-    console.log('props',props.formik)
 
 
     // const [options, setOptions] = useState([]);
@@ -60,11 +58,11 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
     };
 
 
-    const handleCheckboxChange = (event) => {
+    const handleCheckboxChange = (event: any) => {
         setAcceptResourceBooking(event.target.checked);
     };
 
-    const handleAttachmentChange = (event) => {
+    const handleAttachmentChange = (event: any) => {
         const file = event.target.files[0];
         setAttachment(file);
     };
@@ -78,7 +76,6 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
             <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
                     <TextField
-                        required
                         id="bookingItemName"
                         name="bookingItemName"
                         label="Booking Item Name"
@@ -93,7 +90,6 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <TextField
-                        required
                         id="category"
                         name="category"
                         label="Category"
@@ -115,7 +111,6 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
-                        required
                         id="selectResource"
                         name="selectResource"
                         label="Select the Resource you want to book"
@@ -153,6 +148,10 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker 
                             label="Select the booking date" 
+                            value={props.formik.values.bookingDate}
+                            onChange={props.formik.handleChange}
+                            defaultValue={dayjs()} 
+                            disablePast
                         />
                     </LocalizationProvider>
                 </Grid>
@@ -168,8 +167,11 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
                 </Grid>
                 <Grid item xs={12} sm={12}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <TimePicker 
-                            label="Pick a time"
+                        <MobileTimePicker 
+                            label="Select the booking time"
+                            value={props.formik.values.bookingTime}
+                            onChange={props.formik.handleChange}
+                            defaultValue={dayjs()} 
                         />
                     </LocalizationProvider>
                 </Grid>
@@ -212,7 +214,8 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
                                 name="attachment"
                                 type="file"
                                 style={{display: 'none'}}
-                                onChange={handleAttachmentChange}
+                                value={props.formik.values.attachment}
+                                onChange={props.formik.handleChange}
                             />
                             <label htmlFor="attachment" style={{display: 'flex', flexDirection: 'column'}}>
                                 <Button

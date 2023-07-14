@@ -4,7 +4,11 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 
-export default function UserInformationForm() {
+type UserInformationFormProps = {
+  formik: any;
+};
+
+export default function UserInformationForm(props :UserInformationFormProps) {
   const [userType, setUserType] = useState("student");
   const [userId, setUserId] = useState("");
   const [teacherId, setTeacherId] = useState("");
@@ -12,7 +16,7 @@ export default function UserInformationForm() {
   const [occupants, setOccupants] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
 
-  const handleChange = (event) => {
+  const handleChange = (event: any) => {
     const { name, value } = event.target;
     switch (name) {
       case "userType":
@@ -47,13 +51,14 @@ export default function UserInformationForm() {
         <Grid item xs={12}>
           <TextField
             select
-            required
             id="userType"
             name="userType"
             label="User Type"
             fullWidth
-            value={userType}
-            onChange={handleChange}
+            value={props.formik.values.userType}
+            onChange={props.formik.handleChange}
+            error={props.formik.touched.userType && Boolean(props.formik.errors.userType)}
+            helperText={props.formik.touched.userType && props.formik.errors.userType}
             variant="standard"
           >
             <MenuItem value="student">Student</MenuItem>
@@ -61,57 +66,29 @@ export default function UserInformationForm() {
             <MenuItem value="admin">Admin</MenuItem>
           </TextField>
         </Grid>
-        {userType === "student" && (
-          <Grid item xs={12} md={6}>
-            <TextField
-              required
-              id="userId"
-              name="userId"
-              label="Registration ID"
-              fullWidth
-              value={userId}
-              onChange={handleChange}
-              variant="standard"
-            />
-          </Grid>
-        )}
-        {userType === "teacher" && (
-          <Grid item xs={12} md={6}>
-            <TextField
-              required
-              id="teacherId"
-              name="teacherId"
-              label="Teacher's ID"
-              fullWidth
-              value={teacherId}
-              onChange={handleChange}
-              variant="standard"
-            />
-          </Grid>
-        )}
-        {userType === "admin" && (
-          <Grid item xs={12} md={6}>
-            <TextField
-              required
-              id="adminId"
-              name="adminId"
-              label="Admin ID"
-              fullWidth
-              value={adminId}
-              onChange={handleChange}
-              variant="standard"
-            />
-          </Grid>
-        )}
+        <Grid item xs={12} md={6}>
+          <TextField
+            id="userId"
+            name="userId"
+            label="Registration ID"
+            fullWidth
+            value={props.formik.values.userId}
+            onChange={props.formik.handleChange}
+            error={props.formik.touched.userId && Boolean(props.formik.errors.userId)}
+            helperText={props.formik.touched.userId && props.formik.errors.userId}
+            variant="standard"
+          />
+        </Grid>
         <Grid item xs={6}>
         <TextField
-            required
             id="occupants"
             name="occupants"
             label="Number of Occupants"
             fullWidth
-            value={occupants}
-            onChange={handleChange}
+            value={props.formik.values.occupants}
+            onChange={props.formik.handleChange}
+            error={props.formik.touched.occupants && Boolean(props.formik.errors.occupants)}
+            helperText={props.formik.touched.occupants && props.formik.errors.occupants}
             variant="standard"
           />
         </Grid>
@@ -124,8 +101,10 @@ export default function UserInformationForm() {
             fullWidth
             multiline
             rows={4}
-            value={additionalInfo}
-            onChange={handleChange}
+            value={props.formik.values.additionalInfo}
+            onChange={props.formik.handleChange}
+            error={props.formik.touched.additionalInfo && Boolean(props.formik.errors.additionalInfo)}
+            helperText={props.formik.touched.additionalInfo && props.formik.errors.additionalInfo}
             variant="standard"
           />
         </Grid>
