@@ -162,7 +162,7 @@ export default function BookingContainer() {
       formikForm2.handleSubmit()
     }else if(activeStep === 2){
       setActiveStep(activeStep + 1);
-      //Send the respond to backend
+      //post request
     }
   };
 
