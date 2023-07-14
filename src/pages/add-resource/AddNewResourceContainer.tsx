@@ -7,9 +7,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Paper from "@mui/material/Paper";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
-import Grid from "@mui/material/Grid";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
@@ -19,8 +16,7 @@ import ResourceSelectionForm from "./ResourceSelectionForm";
 import Review from "./Review";
 import { Avatar, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Link as RouterLink } from 'react-router-dom';
-
+import { Link as RouterLink } from "react-router-dom";
 
 function Copyright() {
   return (
@@ -35,27 +31,51 @@ function Copyright() {
   );
 }
 
-const steps = ["Add new Resource",  "Review"];
-
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <ResourceSelectionForm />;
-    case 1:
-      return <Review />;
-    default:
-      throw new Error("Unknown step");
-  }
-}
+const steps = ["Add new Resource", "Review"];
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function AddNewResourceContainer() {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [resourceName, setResourceName] = useState("");
+  const [resourceCount, setResourceCount] = useState(1);
+  const [successful, setSuccessful] = useState(false);
+
+  function getStepContent(step: number) {
+    switch (step) {
+      case 0:
+        return (
+          <ResourceSelectionForm
+            resourceName={resourceName}
+            resourceCount={resourceCount}
+            setResourceName={setResourceName}
+            setResourceCount={setResourceCount}
+          />
+        );
+      case 1:
+        return (
+          <Review resourceName={resourceName} resourceCount={resourceCount} />
+        );
+      default:
+        throw new Error("Unknown step");
+    }
+  }
 
   const handleNext = () => {
+    switch (activeStep) {
+      case 0:
+        console.log("Next - Create Resource");
+        break;
+      case 1:
+        // TODO: call API to create resource
+        setSuccessful(true);
+        console.log("Resource created");
+        break;
+      default:
+        throw new Error("Unknown step");
+    }
+
     setActiveStep(activeStep + 1);
   };
 
@@ -67,10 +87,6 @@ export default function AddNewResourceContainer() {
 
   const handleHomeClick = () => {
     navigate("/");
-  };
-
-  const handleTermsCheckboxChange = (event) => {
-    setTermsAccepted(event.target.checked);
   };
 
   return (
@@ -86,7 +102,7 @@ export default function AddNewResourceContainer() {
         }}
       >
         <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
-          <Button variant="h6" color="inherit" onClick={handleHomeClick}>
+          <Button color="inherit" onClick={handleHomeClick}>
             Booking System
           </Button>
           <a href="#">
@@ -114,47 +130,46 @@ export default function AddNewResourceContainer() {
           </Stepper>
           {activeStep === steps.length ? (
             <React.Fragment>
-              <Typography variant="h5" gutterBottom>
-                Thank you for your booking.
-              </Typography>
-              <Typography variant="subtitle1">
-                Your booking number is #2001539. We have recorded your booking
-                confirmation, and will send you an update when your booking is
-                ready.
-              </Typography>
-              <Box
-                sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}
-              >
-                <Button
-                  component={RouterLink}
-                  to="/"
-                  variant="contained"
-                  color="primary"
-                >
-                  Back Home
-                </Button>
-              </Box>
+              {successful && (
+                <React.Fragment>
+                  <Typography variant="h5" gutterBottom>
+                    The resource was successfully created.
+                  </Typography>
+                  <Typography variant="subtitle1">
+                    Resource Name: {resourceName}
+                  </Typography>
+                  <Typography variant="subtitle1">
+                    Resource Count: {resourceCount}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginTop: 2,
+                    }}
+                  >
+                    <Button
+                      component={RouterLink}
+                      to="/"
+                      variant="contained"
+                      color="primary"
+                    >
+                      Back Home
+                    </Button>
+                  </Box>
+                </React.Fragment>
+              )}
+              {!successful && (
+                <React.Fragment>
+                  <Typography variant="h5" gutterBottom>
+                    The resource could not be created.
+                  </Typography>
+                </React.Fragment>
+              )}
             </React.Fragment>
           ) : (
             <React.Fragment>
               {getStepContent(activeStep)}
-
-              {activeStep === steps.length - 1 && (
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={termsAccepted}
-                          onChange={handleTermsCheckboxChange}
-                        />
-                      }
-                      label="I have read and accepted the terms and conditions"
-                    />
-                  </Grid>
-                </Grid>
-              )}
-
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 {activeStep !== 0 && (
                   <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
@@ -167,9 +182,8 @@ export default function AddNewResourceContainer() {
                     variant="contained"
                     onClick={handleNext}
                     sx={{ mt: 3, ml: 1 }}
-                    disabled={!termsAccepted}
                   >
-                    Place booking
+                    Create Resource
                   </Button>
                 ) : (
                   <Button
