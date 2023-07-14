@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Avatar, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { ResourceCard } from "./ResourceCard";
+import { BookingCard } from "./BookingCard";
 import { bookingsData } from "./examples";
 
 const defaultTheme = createTheme();
@@ -64,7 +64,7 @@ export default function ViewBookingsContainer(): JSX.Element {
           </Typography>
           <Box sx={{ mt: 2 }}>
             {bookingsData.map((booking) => (
-              <ResourceCard key={booking.booking_id} booking={booking} />
+              <BookingCard key={booking.booking_id} booking={booking} />
             ))}
           </Box>
         </Paper>

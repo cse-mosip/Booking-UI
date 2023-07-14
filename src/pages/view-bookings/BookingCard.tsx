@@ -40,7 +40,7 @@ const ExpandIndicator = styled(ExpandMoreIcon)(({ theme }) => ({
   marginLeft: "auto",
 }));
 
-export const ResourceCard: React.FC<{ booking: Booking }> = ({ booking }) => {
+export const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
 
