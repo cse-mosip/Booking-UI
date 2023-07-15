@@ -72,7 +72,7 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
         props.formik.values.bookingDate = date;
         setFlagForBookingDate(true);
         setLoader(true);
-        const response = await bookingService.getBookedTimeSlots(props.formik.values);
+        const response = []; /*await bookingService.getBookedTimeSlots(props.formik.values)*/;
         setTimeout(() => {
           setLoader(false);
         }, 200);

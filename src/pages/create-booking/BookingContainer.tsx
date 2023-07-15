@@ -116,7 +116,7 @@ export default function BookingContainer() {
       formikForm1.handleSubmit();
     }else if(activeStep === 1){
       setLoader(true)
-      const response = await bookingService.bookingResource(formValues);
+      const response = true; /*await bookingService.bookingResource(formValues);*/
       setTimeout(() => {
         setLoader(false);
       }, 200);

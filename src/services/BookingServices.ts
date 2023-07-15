@@ -1,17 +1,16 @@
-import axios from 'src/services/HttpServices';
+import axios from "src/services/HttpServices";
 import ToasterMessage from "src/helpers/ToasterMessage";
 
-const bookingResource = async (data :any) => {
+const getBookings = async () => {
   try {
-    const res = await axios.post('/bookingResource',data);
-    if (res.status === 200) {
-        ToasterMessage.SuccessMessage("Booking resource successfully");
-        return(res.data);
-    }else{
+    const response = await axios.get("/bookings");
+    if (response.status === 200) {
+      return(response.data);
+    } else {
       ToasterMessage.errorMessage({
-        main_part: 'Booking resource failed!',
+        main_part: 'Could not get bookings!',
       });
-      return(false)
+      return(false);
     }
   } catch (error) {
     ToasterMessage.errorMessage({
@@ -21,22 +20,31 @@ const bookingResource = async (data :any) => {
   }
 };
 
-const getBookings = async (data :any) => {
-  const res = await axios.post('/getBookings',data);
-  return(res.data);
-};
-
-const getBookedTimeSlots = async (data :any) => {
+const bookResource = async (
+  username: string,
+  resourceId: number,
+  reason: string,
+  count: number,
+  startDateTime: string,
+  endDateTime: string
+) => {
+  const bookingData = {
+    username: username,
+    resourceId: resourceId,
+    reason: reason,
+    count: count,
+    startDateTime: startDateTime,
+    endDateTime: endDateTime,
+  };
   try {
-    const res = await axios.post('/getBookedTimeSlots',data);
-    if (res.status === 200) {
-        ToasterMessage.SuccessMessage("Get time slots successfully");
-        return(res.data);
-    }else{
+    const response = await axios.post("/bookings", bookingData);
+    if (response.status === 200) {
+      return(response.data);
+    } else {
       ToasterMessage.errorMessage({
-        main_part: 'Getting time slots failed!',
+        main_part: 'Could not create the booking!',
       });
-      return(false)
+      return(false);
     }
   } catch (error) {
     ToasterMessage.errorMessage({
@@ -46,10 +54,93 @@ const getBookedTimeSlots = async (data :any) => {
   }
 };
 
+const findBookingById = async (bookingId: number) => {
+  try {
+    const response = await axios.get(`/bookings/${bookingId}`);
+    if (response.status === 200) {
+      return(response.data);
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: 'Could not find the booking!',
+      });
+      return(false);
+    }
+  } catch (error) {
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
+  }
+};
 
+const getBookedTimeSlots = async (resourceId: number, date: string) => {
+  try {
+    const response = await axios.get(
+      `/bookings?resource_id=${resourceId}&date=${date}`
+    );
+    if (response.status === 200) {
+      return(response.data);
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: 'Could not get timeslots!',
+      });
+      return(false);
+    }
+  } catch (error) {
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
+  }
+};
+
+const deleteBooking = async (bookingId: number) => {
+  try {
+    const response = await axios.delete(`/bookings/${bookingId}`);
+    if (response.status === 200) {
+      return(response.data);
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: 'Could not delete the booking!',
+      });
+      return(false);
+    }
+  } catch (error) {
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
+  }
+};
+
+const updateBookingStatus = async (bookingId: number, status: string) => {
+  const bookingStatus = { status: status };
+  try {
+    const response = await axios.patch(
+      `/bookings/${bookingId}/status`,
+      bookingStatus
+    );
+    if (response.status === 200) {
+      return(response.data);
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: 'Could not update the status!',
+      });
+      return(false);
+    }
+  } catch (error) {
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
+  }
+};
 
 export default {
-  bookingResource,
+  getBookings,
+  bookResource,
+  findBookingById,
   getBookedTimeSlots,
-  getBookings
+  deleteBooking,
+  updateBookingStatus,
 };
