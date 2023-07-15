@@ -1,6 +1,6 @@
 import axios from 'src/services/HttpServices';
 
-const getResources = async (data :any) => {
+const getResources = async () => {
     const res = await axios.get('/getResource');
     return(res.data);
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -11,12 +11,11 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Avatar, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { styled } from "@mui/material/styles";
+import resourcesServices from "src/services/ResourcesServices";
 
 function FutureBookingsTable({ bookings } :any) {
   return (
@@ -62,16 +61,15 @@ function ResourceCard({ resource } :any) {
   return (
     <Card sx={{ mt: 2 }} onClick={handleExpand} style={{ cursor: "pointer" }}>
       <CardContent>
-        <Typography variant="subtitle1">Resource ID: {resource.resource_id}</Typography>
-        <Typography variant="body2" color="textSecondary">
+        <Typography variant="subtitle1" >
           Resource Name: {resource.resource_name}
         </Typography>
+        <Typography variant="body2" color='textSecondary'>Resource ID: {resource.resource_id}</Typography>
+
         <Typography variant="body2" color="textSecondary">
-          Faculty: {resource.faculty}
+          Count: {resource.count}
         </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Department: {resource.department}
-        </Typography>
+
         <CardActions disableSpacing>
         <IconButton onClick={handleExpand} aria-expanded={expanded}>
           <ExpandMoreIcon
@@ -108,8 +106,7 @@ const resourcesData = [
   {
     resource_id: 1,
     resource_name: "Conference Room C",
-    faculty: "Faculty A",
-    department: "Department X",
+    count:40,
     futureBookings: [
       { id: 1, booker: "Sarah Johnson", date: "2023-07-17", users: 8, time: "10:00 AM", duration: "2hrs" },
       { id: 2, booker: "Michael Brown", date: "2023-07-18", users: 10, time: "2:00 PM",  duration: "2hrs" },
@@ -118,8 +115,7 @@ const resourcesData = [
   {
     resource_id: 2,
     resource_name: "Studio D",
-    faculty: "Faculty B",
-    department: "Department Y",
+    count:40,
     futureBookings: [
       { id: 3, booker: "Emily Wilson", date: "2023-07-19", users: 4, time: "9:30 AM",  duration: "2hrs" },
       { id: 4, booker: "John Smith", date: "2023-07-20", users: 6, time: "11:00 AM",  duration: "2hrs" },
@@ -128,8 +124,7 @@ const resourcesData = [
   {
     resource_id: 3,
     resource_name: "Lab E",
-    faculty: "Faculty C",
-    department: "Department Z",
+    count:40,
     futureBookings: [
       { id: 5, booker: "Jane Doe", date: "2023-07-21", users: 5, time: "3:00 PM",  duration: "2hrs" },
       { id: 6, booker: "Alex Johnson", date: "2023-07-22", users: 3, time: "1:30 PM",  duration: "2hrs" },
@@ -143,10 +138,25 @@ const defaultTheme = createTheme();
 
 export default function ViewResourcesContainer() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [resourceData, setResourceData] = useState([]);
 
+  useEffect(
+    ()=>{
+
+      const fetch = async ()=>{
+        setLoading(true);
+        const response = await resourcesServices.getResources();
+        setResourceData(response);
+        setLoading(false);
+      }
+      fetch();
+    },[]
+  )
   const handleHomeClick = () => {
     navigate("/");
   };
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
