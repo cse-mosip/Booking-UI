@@ -31,7 +31,7 @@ function FutureBookingsTable({ bookings }) {
         </tr>
       </thead>
       <tbody>
-        {bookings.map((booking) => (
+        {bookings.map((booking :any) => (
           <tr key={booking.id}>
             <td style={{ textAlign: "left" }}>{booking.booker}</td>
             <td style={{ textAlign: "center" }}>{booking.users}</td>
@@ -46,7 +46,7 @@ function FutureBookingsTable({ bookings }) {
 }
 
 
-function ResourceCard({ resource }) {
+function ResourceCard({ resource } :any) {
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
 
@@ -161,7 +161,7 @@ export default function ViewResourcesContainer() {
         }}
       >
         <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
-          <Button variant="h6" color="inherit" onClick={handleHomeClick}>
+          <Button color="inherit" onClick={handleHomeClick}>
             Booking System
           </Button>
           <a href="#">

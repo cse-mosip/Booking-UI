@@ -37,7 +37,7 @@ function Copyright() {
 
 const steps = ["Add new Resource",  "Review"];
 
-function getStepContent(step) {
+function getStepContent(step :any) {
   switch (step) {
     case 0:
       return <ResourceSelectionForm />;
@@ -69,7 +69,7 @@ export default function AddNewResourceContainer() {
     navigate("/");
   };
 
-  const handleTermsCheckboxChange = (event) => {
+  const handleTermsCheckboxChange = (event :any) => {
     setTermsAccepted(event.target.checked);
   };
 
@@ -86,7 +86,7 @@ export default function AddNewResourceContainer() {
         }}
       >
         <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
-          <Button variant="h6" color="inherit" onClick={handleHomeClick}>
+          <Button color="inherit" onClick={handleHomeClick}>
             Booking System
           </Button>
           <a href="#">
