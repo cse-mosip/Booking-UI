@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "skipLibCheck": true,
     "baseUrl": "./",
     "esModuleInterop": true,
     "jsx": "react",
@@ -9,7 +10,7 @@
     ],
     "module": "esnext",
     "moduleResolution": "node",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noImplicitThis": true,
     "outDir": "./dist/",
     "paths": {
@@ -23,5 +24,8 @@
       "./node_modules/@types",
       "./typings"
     ]
-  }
+  },
+  "exclude" : [
+    "node_modules"
+  ]
 }

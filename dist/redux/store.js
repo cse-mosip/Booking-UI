@@ -3,18 +3,15 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
 import { rootReducer } from './reducer';
-
 const persistConfig = {
-  key: 'root',
-  version: 1,
-  storage,
+    key: 'root',
+    version: 1,
+    storage,
 };
-
-const persistedReducer = persistReducer(persistConfig, rootReducer())
-
+const persistedReducer = persistReducer(persistConfig, rootReducer());
 export const store = configureStore({
-  reducer: persistedReducer,
-  middleware: [thunk]
-})
-
+    reducer: persistedReducer,
+    middleware: [thunk]
+});
 export const persistor = persistStore(store);
+//# sourceMappingURL=store.js.map

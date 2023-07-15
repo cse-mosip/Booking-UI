@@ -16,12 +16,11 @@ import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ResourceSelectionForm from "./ResourceSelectionForm";
-import UserInformationForm from "./UserInformationForm";
 import Review from "./Review";
 import { Avatar, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Resource } from 'src/types';
 import { AppState } from 'src/redux/reducer';
 import * as yup from 'yup';
@@ -90,8 +89,6 @@ export default function BookingContainer() {
   const month = String(today.getMonth() + 1).padStart(2, '0');
   const day = String(today.getDate()).padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
-
-  console.log('env: ',import.meta.env.VITE_BASE_URL)
 
   const formikForm1 = useFormik({
     initialValues: {
