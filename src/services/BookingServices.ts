@@ -1,8 +1,24 @@
 import axios from 'src/services/HttpServices';
+import ToasterMessage from "src/helpers/ToasterMessage";
 
 const bookingResource = async (data :any) => {
-  const res = await axios.post('/bookingResource',data);
-  return(res.data);
+  try {
+    const res = await axios.post('/bookingResource',data);
+    if (res.status === 200) {
+        ToasterMessage.SuccessMessage("Booking resource successfully");
+        return(res.data);
+    }else{
+      ToasterMessage.errorMessage({
+        main_part: 'Booking resource failed!',
+      });
+      return(false)
+    }
+  } catch (error) {
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
+  }
 };
 
 const getBookings = async (data :any) => {
@@ -11,8 +27,23 @@ const getBookings = async (data :any) => {
 };
 
 const getBookedTimeSlots = async (data :any) => {
-  const res = await axios.post('/getBookedTimeSlots',data);
-  return(res.data);
+  try {
+    const res = await axios.post('/getBookedTimeSlots',data);
+    if (res.status === 200) {
+        ToasterMessage.SuccessMessage("Get time slots successfully");
+        return(res.data);
+    }else{
+      ToasterMessage.errorMessage({
+        main_part: 'Getting time slots failed!',
+      });
+      return(false)
+    }
+  } catch (error) {
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
+  }
 };
 
 

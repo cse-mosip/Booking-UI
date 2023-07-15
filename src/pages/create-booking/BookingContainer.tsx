@@ -16,17 +16,18 @@ import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ResourceSelectionForm from "./ResourceSelectionForm";
-import UserInformationForm from "./UserInformationForm";
 import Review from "./Review";
 import { Avatar, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Resource } from 'src/types';
 import { AppState } from 'src/redux/reducer';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-
+import dayjs from "dayjs";
+import bookingService from "src/services/BookingServices";
+import CircularProgress from '@mui/material/CircularProgress';
 
 function Copyright() {
   return (
@@ -41,99 +42,87 @@ function Copyright() {
   );
 }
 
-const steps = ["Select Resource", "User details", "Review your booking"];
+const steps = ["Select Resource", "Review your booking"];
 
 const form1ValidationSchema = yup.object({
-  bookingItemName: yup
+  bookingTitle: yup
     .string()
-    .required('bookingItemName is required'),
+    .required('Booking item name is required'),
   category: yup
     .string()
-    .required('category is required'),
-  selectResource: yup
+    .required('Resource category is required'),
+  ResourceName: yup
     .string()
-    .required('selectResource is required'),
-  statement: yup
+    .required('Resource is required'),
+  reason: yup
     .string()
-    .required('statement is required'),
-  duration: yup
-    .string()
-    .required('duration is required'),
+    .notRequired(),
+  occupants: yup
+    .number()
+    .required('Occupants count is required')
+    .positive()
+    .max(300)
 });
 
-const form2ValidationSchema = yup.object({
-  email: yup
-    .string()
-    .email('Enter a valid email')
-    .required('Email is required'),
-  name: yup
-    .string()
-    .required('Name is required'),
-  subject: yup
-    .string()
-    .required('Subject is required'),
-});
-
-
-function getStepContent(step :any, formikForm1 :any, formikForm2 :any) {
+function getStepContent(step :any, formikForm1 :any,formValues :any) {
   switch (step) {
     case 0:
-      return <ResourceSelectionForm formik={formikForm1}/>;
+      return <ResourceSelectionForm formik={formikForm1} />;
     case 1:
-      return <UserInformationForm/>;
-    case 2:
-      return <Review />;
+      return <Review BookingForm={formValues}/>;
     default:
       throw new Error("Unknown step");
   }
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function BookingContainer() {
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = useState(0);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [formValues, setFormValues] = useState({});
+  const [loader, setLoader] = useState(false);
   const resources: Resource[] | null = useSelector((state: AppState) => state.resources.resources);
-  console.log('resources: ',resources);
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
 
   const formikForm1 = useFormik({
     initialValues: {
-        bookingItemName: '',
+        bookingTitle: '',
         category: '',
-        selectResource: '',
-        statement: '',
-        duration: '',
+        ResourceName: '',
+        reason: '',
+        occupants: '',
+        attachment: '',
+        bookingDate: dayjs(dayjs()),
+        bookingStartTime: dayjs(dayjs(`${formattedDate}T08:00`)),
+        bookingEndTime: dayjs(dayjs(`${formattedDate}T10:00`)),
     },
     validateOnChange: true,
     validationSchema: form1ValidationSchema,
     onSubmit: (values) => {
-      console.log('values: ',values)
-    },
-  });
-  
-  const formikForm2 = useFormik({
-    initialValues: {
-        email: '',
-        name: '',
-        subject: '',
-        message: '',
-    },
-    validateOnChange: true,
-    validationSchema: form2ValidationSchema,
-    onSubmit: (values) => {
-      console.log('values: ',values)
+      setFormValues({ ...formValues, ...values });
+      setActiveStep(1);
     },
   });
 
-  const handleNext = () => {
-    setActiveStep(activeStep + 1);
-    if(activeStep === 0){
-      formikForm1.handleSubmit
+
+  const handleNext = async () => {
+    if(activeStep === 0 && formikForm1.dirty && !(Object.keys(formikForm1.errors).length > 0)){
+      formikForm1.handleSubmit();
     }else if(activeStep === 1){
-      formikForm2.handleSubmit
-    }else if(activeStep === 2){
-      formikForm2.handleSubmit
+      setLoader(true)
+      const response = await bookingService.bookingResource(formValues);
+      setTimeout(() => {
+        setLoader(false);
+      }, 200);
+      if(response){
+        setActiveStep(activeStep + 1);
+      }
     }
   };
 
@@ -160,11 +149,11 @@ export default function BookingContainer() {
         elevation={0}
         sx={{
           position: "relative",
-          borderBottom: (t) => `1px solid ${t.palette.divider}`,
+          borderBottom: (t: any) => `1px solid ${t.palette.divider}`,
         }}
       >
         <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
-          <Button variant="h6" color="inherit" onClick={handleHomeClick}>
+          <Button color="inherit" onClick={handleHomeClick}>
             Booking System
           </Button>
           <a href="#">
@@ -216,50 +205,54 @@ export default function BookingContainer() {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              {getStepContent(activeStep,formikForm1,formikForm2)}
+              <form onSubmit={ (activeStep===0) ? formikForm1.handleSubmit : null }>
+                {getStepContent(activeStep,formikForm1,formValues)}
 
-              {activeStep === steps.length - 1 && (
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={termsAccepted}
-                          onChange={handleTermsCheckboxChange}
-                        />
-                      }
-                      label="I have read and accepted the terms and conditions"
-                    />
+                {activeStep === steps.length - 1 && (
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={termsAccepted}
+                            onChange={handleTermsCheckboxChange}
+                          />
+                        }
+                        label="I have read and accepted the terms and conditions"
+                      />
+                    </Grid>
                   </Grid>
-                </Grid>
-              )}
-
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                {activeStep !== 0 && (
-                  <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                    Back
-                  </Button>
                 )}
 
-                {activeStep === steps.length - 1 ? (
-                  <Button
-                    variant="contained"
-                    onClick={handleNext}
-                    sx={{ mt: 3, ml: 1 }}
-                    disabled={!termsAccepted}
-                  >
-                    Place booking
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    onClick={handleNext}
-                    sx={{ mt: 3, ml: 1 }}
-                  >
-                    Next
-                  </Button>
-                )}
-              </Box>
+                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                  {activeStep !== 0 && (
+                    <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                      Back
+                    </Button>
+                  )}
+
+                  {activeStep === steps.length - 1 ? (
+                    <Button
+                      variant="contained"
+                      onClick={handleNext}
+                      sx={{ mt: 3, ml: 1 }}
+                      disabled={!termsAccepted}
+                    >
+                     Place booking &nbsp;&nbsp; {loader ? <CircularProgress color="inherit" size={30} /> : null}
+                    </Button>
+                  ) : (
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      onClick={handleNext}
+                      sx={{ mt: 3, ml: 1 }}
+                    >
+                      Next
+                    </Button>
+                  )}
+                  
+                </Box>
+              </form>
             </React.Fragment>
           )}
         </Paper>
