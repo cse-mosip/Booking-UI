@@ -3,7 +3,8 @@
     "skipLibCheck": true,
     "baseUrl": "./",
     "esModuleInterop": true,
-    "jsx": "react",
+    "noEmit": true,
+    "jsx": "react-jsx",
     "lib": [
       "es6",
       "dom"
@@ -12,20 +13,20 @@
     "moduleResolution": "node",
     "noImplicitAny": false,
     "noImplicitThis": true,
-    "outDir": "./dist/",
     "paths": {
-      "src": ["src"]
+      "src": [
+        "src"
+      ]
     },
     "sourceMap": true,
     "strictNullChecks": false,
     "strict": true,
-    "target": "es6",
+    "target": "ES2020",
+    "isolatedModules": true,
+    "resolveJsonModule": true,
     "typeRoots": [
       "./node_modules/@types",
       "./typings"
     ]
   },
-  "exclude" : [
-    "node_modules"
-  ]
 }
