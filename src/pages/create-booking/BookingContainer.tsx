@@ -91,7 +91,7 @@ export default function BookingContainer() {
   const day = String(today.getDate()).padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
 
-  console.log('env: ',import.meta.env.BASE_URL)
+  console.log('env: ',import.meta.env.VITE_BASE_URL)
 
   const formikForm1 = useFormik({
     initialValues: {
