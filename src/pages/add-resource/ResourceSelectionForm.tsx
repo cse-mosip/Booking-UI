@@ -33,7 +33,7 @@ export default function ResourceSelectionForm() {
     //         .catch(error => console.log(error));
     // }, []);
 
-    const handleAddressChange = (event) => {
+    const handleAddressChange = (event :any) => {
         setValueOfSelectionBox(event.target.value);
     };
 
@@ -45,16 +45,16 @@ export default function ResourceSelectionForm() {
         }
     };
 
-    const handleBookingDateChange = (date) => {
+    const handleBookingDateChange = (date :any) => {
         setBookingDate(date);
     };
 
 
-    const handleCheckboxChange = (event) => {
+    const handleCheckboxChange = (event :any) => {
         setAcceptResourceBooking(event.target.checked);
     };
 
-    const handleAttachmentChange = (event) => {
+    const handleAttachmentChange = (event :any) => {
         const file = event.target.files[0];
         setAttachment(file);
     };

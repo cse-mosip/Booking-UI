@@ -18,7 +18,7 @@ import { Avatar, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 
-function FutureBookingsTable({ bookings }) {
+function FutureBookingsTable({ bookings } :any) {
   return (
     <table style={{ width: "100%" }}>
       <thead>
