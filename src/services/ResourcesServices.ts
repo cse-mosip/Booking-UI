@@ -45,9 +45,26 @@ const deleteResource = async (id: number) => {
   }
 };
 
+const getAvailableResourceCount = async (id: number, timeslot: string) => {
+  try {
+    const response = await axios.get(
+      `/resources/${id}/available?timeslot=${timeslot}`
+    );
+    return response.data;
+  } catch (error) {
+    // Handle error
+    console.error(
+      "Error occurred while fetching available resource count:",
+      error
+    );
+    throw error;
+  }
+};
+
 export default {
   getResources,
   createResource,
   getResourceById,
   deleteResource,
+  getAvailableResourceCount,
 };
