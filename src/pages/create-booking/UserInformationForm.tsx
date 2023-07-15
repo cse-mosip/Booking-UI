@@ -79,19 +79,6 @@ export default function UserInformationForm(props :UserInformationFormProps) {
             variant="standard"
           />
         </Grid>
-        <Grid item xs={6}>
-        <TextField
-            id="occupants"
-            name="occupants"
-            label="Number of Occupants"
-            fullWidth
-            value={props.formik.values.occupants}
-            onChange={props.formik.handleChange}
-            error={props.formik.touched.occupants && Boolean(props.formik.errors.occupants)}
-            helperText={props.formik.touched.occupants && props.formik.errors.occupants}
-            variant="standard"
-          />
-        </Grid>
         <Grid item xs={12}>
           
           <TextField

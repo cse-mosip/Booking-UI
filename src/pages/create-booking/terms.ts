@@ -1,3 +1,4 @@
+export const bookingTerms: string = `
 Booking Terms and Conditions for University Resources
 
 1. Booking Eligibility:
@@ -31,3 +32,4 @@ Booking Terms and Conditions for University Resources
    7.2. Users agree to indemnify and hold the university harmless against any claims, liabilities, or expenses arising from their use of the resources.
 
 By accepting these Terms and Conditions, you acknowledge that you have read, understood, and agreed to abide by the rules and regulations outlined above.
+`;
