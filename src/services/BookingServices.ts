@@ -1,13 +1,22 @@
 import axios from "src/services/HttpServices";
+import ToasterMessage from "src/helpers/ToasterMessage";
 
 const getBookings = async () => {
   try {
     const response = await axios.get("/bookings");
-    return response.data;
+    if (response.status === 200) {
+      return(response.data);
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: 'Could not get bookings!',
+      });
+      return(false);
+    }
   } catch (error) {
-    // Handle error
-    console.error("Error occurred while fetching bookings:", error);
-    throw error;
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
   }
 };
 
@@ -29,22 +38,38 @@ const bookResource = async (
   };
   try {
     const response = await axios.post("/bookings", bookingData);
-    return response.data;
+    if (response.status === 200) {
+      return(response.data);
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: 'Could not create the booking!',
+      });
+      return(false);
+    }
   } catch (error) {
-    // Handle error
-    console.error("Error occurred during resource booking:", error);
-    throw error;
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
   }
 };
 
 const findBookingById = async (bookingId: number) => {
   try {
     const response = await axios.get(`/bookings/${bookingId}`);
-    return response.data;
+    if (response.status === 200) {
+      return(response.data);
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: 'Could not find the booking!',
+      });
+      return(false);
+    }
   } catch (error) {
-    // Handle error
-    console.error("Error occurred while finding a booking by ID:", error);
-    throw error;
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
   }
 };
 
@@ -53,22 +78,38 @@ const getBookedTimeSlots = async (resourceId: number, date: string) => {
     const response = await axios.get(
       `/bookings?resource_id=${resourceId}&date=${date}`
     );
-    return response.data;
+    if (response.status === 200) {
+      return(response.data);
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: 'Could not get timeslots!',
+      });
+      return(false);
+    }
   } catch (error) {
-    // Handle error
-    console.error("Error occurred while fetching booked time slots:", error);
-    throw error;
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
   }
 };
 
 const deleteBooking = async (bookingId: number) => {
   try {
     const response = await axios.delete(`/bookings/${bookingId}`);
-    return response.data;
+    if (response.status === 200) {
+      return(response.data);
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: 'Could not delete the booking!',
+      });
+      return(false);
+    }
   } catch (error) {
-    // Handle error
-    console.error("Error occurred while deleting a booking:", error);
-    throw error;
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
   }
 };
 
@@ -79,11 +120,19 @@ const updateBookingStatus = async (bookingId: number, status: string) => {
       `/bookings/${bookingId}/status`,
       bookingStatus
     );
-    return response.data;
+    if (response.status === 200) {
+      return(response.data);
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: 'Could not update the status!',
+      });
+      return(false);
+    }
   } catch (error) {
-    // Handle error
-    console.error("Error occurred while updating the booking status:", error);
-    throw error;
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return(false);
   }
 };
 

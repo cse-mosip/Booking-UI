@@ -6,10 +6,13 @@ export type Resource = {
 }
 
 export type Booking = {
-    userInfo: string;
-    resource: Resource;
-    date: string;
-    time: string;
-    duration: string;
-    description: string;
+    bookingTitle: string;
+    category: Resource;
+    ResourceName: string;
+    reason?: string;
+    bookingDate: any;
+    bookingStartTime: any;
+    bookingEndTime: any;
+    occupants: number;
 }
+
