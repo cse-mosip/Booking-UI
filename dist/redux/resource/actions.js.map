@@ -1,1 +1,0 @@
-{"version":3,"file":"actions.js","sourceRoot":"","sources":["../../../src/redux/resource/actions.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,eAAe,EAAE,gBAAgB,EAAuB,MAAM,SAAS,CAAC;AAEjF,MAAM,UAAU,gBAAgB,CAAC,SAAqB;IACpD,OAAO;QACL,IAAI,EAAE,gBAAgB;QACtB,OAAO,EAAE,SAAS;KACnB,CAAC;AACJ,CAAC;AAED,MAAM,UAAU,eAAe;IAC7B,OAAO;QACL,IAAI,EAAE,eAAe;KACtB,CAAC;AACJ,CAAC"}
