@@ -64,7 +64,7 @@ export default function AddNewResourceContainer() {
                 borderBottom: (t) => `1px solid ${t.palette.divider}`,
             } },
             React.createElement(Toolbar, { style: { display: "flex", justifyContent: "space-between" } },
-                React.createElement(Button, { variant: "h6", color: "inherit", onClick: handleHomeClick }, "Booking System"),
+                React.createElement(Button, { color: "inherit", onClick: handleHomeClick }, "Booking System"),
                 React.createElement("a", { href: "#" },
                     React.createElement(IconButton, { edge: "end", color: "inherit", "aria-label": "User Profile" },
                         React.createElement(Avatar, { alt: "User Image", src: "/assets/images/21104.png" }))))),

@@ -5,36 +5,9 @@ import Grid from "@mui/material/Grid";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
-import termsText from "./terms.txt";
+import {bookingTerms} from "src/pages/add-resource/terms";
 
 export default function Review() {
-  const [termsAndConditions, setTermsAndConditions] = useState("");
-
-  // useEffect(() => {
-  //   fetch("/terms")
-  //     .then((response) => response.text())
-  //     .then((data) => {
-  //       setTermsAndConditions(data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error reading terms.txt:", error);
-  //     });
-  // }, []);
-
-  useEffect(() => {
-    // Read the terms.txt file
-    const readTerms = async () => {
-      try {
-        const response = await fetch(termsText);
-        const data = await response.text();
-        setTermsAndConditions(data);
-      } catch (error) {
-        console.error("Error reading terms.txt:", error);
-      }
-    };
-
-    readTerms();
-  }, []);
 
   return (
     <React.Fragment>
@@ -92,7 +65,7 @@ export default function Review() {
             InputProps={{
               readOnly: true,
             }}
-            value={termsAndConditions}
+            value={bookingTerms}
           />
         </Grid>
       </Grid>

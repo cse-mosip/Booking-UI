@@ -13,8 +13,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Link from '@mui/material/Link';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import UniversityLogo from '/assets/images/University_of_Moratuwa_logo.png';
-import BackgroundImage from '/assets/images/background.jpg';
+import UniversityLogo from '../../../public/assets/images/University_of_Moratuwa_logo.png';
+import BackgroundImage from '../../../public/assets/images/background.jpg';
+// import authServices from 'src/services/AuthServices';
 const defaultTheme = createTheme({
     palette: {
         primary: {
