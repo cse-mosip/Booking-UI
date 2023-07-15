@@ -1,5 +1,6 @@
 import axios from "src/services/HttpServices";
 import ToasterMessage from "src/helpers/ToasterMessage";
+import { BookingForm } from 'src/types';
 
 const getBookings = async () => {
   try {
@@ -20,21 +21,14 @@ const getBookings = async () => {
   }
 };
 
-const bookResource = async (
-  username: string,
-  resourceId: number,
-  reason: string,
-  count: number,
-  startDateTime: string,
-  endDateTime: string
-) => {
+const bookResource = async (data :BookingForm) => {
   const bookingData = {
-    username: username,
-    resourceId: resourceId,
-    reason: reason,
-    count: count,
-    startDateTime: startDateTime,
-    endDateTime: endDateTime,
+    username: data.username,
+    resourceId: data.resourceId,
+    reason: data.reason,
+    count: data.count,
+    startDateTime: data.startDateTime,
+    endDateTime: data.endDateTime,
   };
   try {
     const response = await axios.post("/bookings", bookingData);
@@ -73,7 +67,7 @@ const findBookingById = async (bookingId: number) => {
   }
 };
 
-const getBookedTimeSlots = async (resourceId: number, date: string) => {
+const getBookedTimeSlots = async (resourceId: string, date: string) => {
   try {
     const response = await axios.get(
       `/bookings?resource_id=${resourceId}&date=${date}`

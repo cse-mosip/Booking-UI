@@ -25,7 +25,6 @@ export default function Review(props :ReviewProps) {
       <Typography variant="h6" gutterBottom>
         Booking summary
       </Typography>
-      <Typography gutterBottom>Booking Title: {props.BookingForm.bookingTitle}</Typography>
       <Typography gutterBottom>Resource Selected: {props.BookingForm.ResourceName}</Typography>
       <Typography gutterBottom>Date: {bookingDate}</Typography>
       <Typography gutterBottom>Booking start time: {bookingStartTime}</Typography>

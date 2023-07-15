@@ -21,13 +21,14 @@ import { Avatar, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Resource } from 'src/types';
+import { Resource, User } from 'src/types';
 import { AppState } from 'src/redux/reducer';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import dayjs from "dayjs";
 import bookingService from "src/services/BookingServices";
 import CircularProgress from '@mui/material/CircularProgress';
+import {formatDate} from "src/helpers/utils"
 
 function Copyright() {
   return (
@@ -45,12 +46,6 @@ function Copyright() {
 const steps = ["Select Resource", "Review your booking"];
 
 const form1ValidationSchema = yup.object({
-  bookingTitle: yup
-    .string()
-    .required('Booking item name is required'),
-  category: yup
-    .string()
-    .required('Resource category is required'),
   ResourceName: yup
     .string()
     .required('Resource is required'),
@@ -80,9 +75,10 @@ const defaultTheme = createTheme();
 export default function BookingContainer() {
   const [activeStep, setActiveStep] = useState(0);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [formValues, setFormValues] = useState({});
+  const [formValues, setFormValues] = useState<any>({});
   const [loader, setLoader] = useState(false);
   const resources: Resource[] | null = useSelector((state: AppState) => state.resources.resources);
+  const user: User | null = useSelector((state: AppState) => state.user.user);
 
   const today = new Date();
   const year = today.getFullYear();
@@ -92,12 +88,10 @@ export default function BookingContainer() {
 
   const formikForm1 = useFormik({
     initialValues: {
-        bookingTitle: '',
-        category: '',
         ResourceName: '',
+        resourceId: '',
         reason: '',
         occupants: '',
-        attachment: '',
         bookingDate: dayjs(dayjs()),
         bookingStartTime: dayjs(dayjs(`${formattedDate}T08:00`)),
         bookingEndTime: dayjs(dayjs(`${formattedDate}T10:00`)),
@@ -116,7 +110,13 @@ export default function BookingContainer() {
       formikForm1.handleSubmit();
     }else if(activeStep === 1){
       setLoader(true)
-      const response = true; /*await bookingService.bookingResource(formValues);*/
+      formValues['startDateTime'] = formatDate(formValues.bookingStartTime);
+      formValues['endDateTime'] = formatDate(formValues.bookingEndTime);
+      formValues['count'] = formValues.occupants;
+      formValues['resourceId'] = (resources.find((item) => item.name === formValues.ResourceName)).id;
+      formValues['username'] = user.username;
+      console.log(formValues);
+      const response = await bookingService.bookResource(formValues);
       setTimeout(() => {
         setLoader(false);
       }, 200);
