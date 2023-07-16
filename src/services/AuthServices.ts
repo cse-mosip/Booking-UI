@@ -46,7 +46,7 @@ const logout = async (token: string) => {
     if(response.status === 200 || response.status === 202){
       Token.removeAccessToken();
       dispatch(removeUser());
-      navigate('/dashboard');
+      navigate('/login');
     }
   } catch (error) {
     throw error;
