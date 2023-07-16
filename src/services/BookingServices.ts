@@ -14,9 +14,6 @@ const getBookings = async () => {
       return(false);
     }
   } catch (error) {
-    ToasterMessage.errorMessage({
-        error: error,
-    });
     return(false);
   }
 };
@@ -41,9 +38,6 @@ const bookResource = async (data :BookingForm) => {
       return(false);
     }
   } catch (error) {
-    ToasterMessage.errorMessage({
-        error: error,
-    });
     return(false);
   }
 };
@@ -60,9 +54,6 @@ const findBookingById = async (bookingId: number) => {
       return(false);
     }
   } catch (error) {
-    ToasterMessage.errorMessage({
-        error: error,
-    });
     return(false);
   }
 };
@@ -81,9 +72,6 @@ const getBookedTimeSlots = async (resourceId: string, date: string) => {
       return(false);
     }
   } catch (error) {
-    ToasterMessage.errorMessage({
-        error: error,
-    });
     return(false);
   }
 };
@@ -100,9 +88,6 @@ const deleteBooking = async (bookingId: number) => {
       return(false);
     }
   } catch (error) {
-    ToasterMessage.errorMessage({
-        error: error,
-    });
     return(false);
   }
 };
@@ -123,9 +108,6 @@ const updateBookingStatus = async (bookingId: number, status: string) => {
       return(false);
     }
   } catch (error) {
-    ToasterMessage.errorMessage({
-        error: error,
-    });
     return(false);
   }
 };

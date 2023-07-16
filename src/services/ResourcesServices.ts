@@ -13,9 +13,6 @@ const getResources = async () => {
       return false;
     }
   } catch (error) {
-    ToasterMessage.errorMessage({
-      error: error,
-    });
     return false;
   }
 };
@@ -33,9 +30,6 @@ const createResource = async (resourceName: string, resourceCount: number) => {
       return false;
     }
   } catch (error) {
-    ToasterMessage.errorMessage({
-      error: error,
-    });
     return false;
   }
 };
@@ -52,9 +46,6 @@ const getResourceById = async (id: number) => {
       return false;
     }
   } catch (error) {
-    ToasterMessage.errorMessage({
-      error: error,
-    });
     return false;
   }
 };
@@ -71,9 +62,6 @@ const deleteResource = async (id: number) => {
       return false;
     }
   } catch (error) {
-    ToasterMessage.errorMessage({
-      error: error,
-    });
     return false;
   }
 };
@@ -92,9 +80,6 @@ const getAvailableResourceCount = async (id: number, timeslot: string) => {
       return false;
     }
   } catch (error) {
-    ToasterMessage.errorMessage({
-      error: error,
-    });
     return false;
   }
 };
