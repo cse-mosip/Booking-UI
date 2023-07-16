@@ -40,7 +40,9 @@ const Dashboard = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    SetResources();
+    setTimeout(() => {
+      SetResources();
+    }, 1000);
   }, [])
 
   const SetResources = async () => {

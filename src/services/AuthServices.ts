@@ -24,6 +24,7 @@ const login = async (username: string, password: string) => {
   try {
     const response = await axios.post("/auth/login", data);
     if(response.status === 200 || response.status === 202){
+      console.log('token',response.data.data.token);
       Token.setAccessToken(response.data.data.token);
       return response.data
     }
@@ -33,11 +34,11 @@ const login = async (username: string, password: string) => {
 };
 
 const logout = async (token: string) => {
-  const user: User | null = useSelector((state: AppState) => state.user.user);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const user: User | null = useSelector((state: AppState) => state.user.user);
+  // const navigate = useNavigate();
+  // const dispatch = useDispatch();
   const data = {
-    username: user.username,
+    username: '',
     token,
   };
 
@@ -45,8 +46,8 @@ const logout = async (token: string) => {
     const response = await axios.post("/auth/logout", data);
     if(response.status === 200 || response.status === 202){
       Token.removeAccessToken();
-      dispatch(removeUser());
-      navigate('/login');
+      // dispatch(removeUser());
+      // navigate('/login');
     }
   } catch (error) {
     throw error;
