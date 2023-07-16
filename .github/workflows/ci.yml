@@ -45,4 +45,4 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/cse-mosip/booking-ui:latest
-        # if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
