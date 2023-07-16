@@ -10,7 +10,7 @@ import LoginContainer from 'src/pages/auth/LoginContainer';
 const AppRoutes = () => {
 
     return (
-        <BrowserRouter basename={process.env.PUBLIC_URL}>
+        <BrowserRouter basename={"/frontend-service/booking"}>
             <Routes>
                 <Route path="/" element={<Dashboard/>}/>
                 <Route path="/login" element={<LoginContainer/>} />
