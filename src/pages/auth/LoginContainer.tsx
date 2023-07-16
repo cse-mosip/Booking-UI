@@ -15,7 +15,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import UniversityLogo from '../../../public/assets/images/University_of_Moratuwa_logo.png'
 import BackgroundImage from '../../../public/assets/images/background.jpg';
-// import authServices from 'src/services/AuthServices';
+import authServices from 'src/services/AuthServices';
+import {useNavigate} from "react-router-dom";
+import {useDispatch} from 'react-redux';
+import {enqueueUser, removeUser} from 'src/redux/user/actions';
+import ToasterMessage from "src/helpers/ToasterMessage";
 
 const defaultTheme = createTheme({
     palette: {
@@ -47,16 +51,19 @@ function Copyright() {
 export default function LoginContainer() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    
     const handleLogin = async () => {
-        try {
-            // const response = await authServices.login(username, password);
-            // Handle the successful login response
-            console.log('Login successful:'/*, response*/);
-        } catch (error) {
-            // Handle the login error
-            console.error('Error occurred during login:', error);
-            // Display an error message to the user
+        const res = await authServices.login(username, password);
+        if(res?.status === 'ACCEPTED'){
+            const user = {username: username}
+            dispatch(enqueueUser(user));
+            navigate('/dashboard');
+        }else{
+            ToasterMessage.errorMessage({
+                main_part: 'Login failed',
+              });
         }
     };
 
