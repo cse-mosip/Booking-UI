@@ -74,6 +74,11 @@ function ResourceCard({ resource } : { resource:Resource }) {
   const [countError, setCountError] = useState(false);
 
 
+  useEffect(() => {
+    setName(resource.name);
+    setCount(resource.count);
+  }, []);
+
 
   const futureBookings=resource.bookings;
 
@@ -101,7 +106,7 @@ function ResourceCard({ resource } : { resource:Resource }) {
         {
           !editStarted?(
             <Typography variant="subtitle1" >
-              Resource Name: {resource.name}
+              Resource Name: {name}
             </Typography>
           ):(
             <>
@@ -125,7 +130,7 @@ function ResourceCard({ resource } : { resource:Resource }) {
         {
           !editStarted?(
             <Typography variant="body2" color="textSecondary">
-              Count: {resource.count}
+              Count: {`${count}`}
             </Typography>
           ):(
             <>
