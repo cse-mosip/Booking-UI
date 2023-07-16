@@ -17,8 +17,9 @@ import BackgroundImage from "../../../public/assets/images/background.jpg";
 import Orders from "./Orders";
 import BookingTable from "./BookingsTable";
 import BookingAnalysis from "./BookingAnalysis";
-import resourcesService from "src/services/ResourcesServices";    
-
+import {useDispatch, useSelector} from 'react-redux';
+import {removeResources, enqueueResources} from 'src/redux/resource/actions';
+import resourcesService from "src/services/ResourcesServices";
 
 
 const dashboardTheme = createTheme({
