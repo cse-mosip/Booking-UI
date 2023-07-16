@@ -15,9 +15,9 @@ import AppbarComponent from "src/components/AppbarComponent";
 import DrawerComponent from "src/components/DrawerComponent";
 import BackgroundImage from "../../../public/assets/images/background.jpg";
 import Orders from "./Orders";
-import resourcesService from "src/services/ResourcesServices";    
-import {useDispatch} from 'react-redux';
-import {enqueueResources} from 'src/redux/resource/actions';
+import BookingTable from "./BookingsTable";
+import BookingAnalysis from "./BookingAnalysis";
+
 
 const dashboardTheme = createTheme({
   palette: {
@@ -80,7 +80,6 @@ const Dashboard = () => {
               top: 0,
               left: 0,
               width: "100%",
-              height: "100%",
               backgroundColor: "rgba(0, 0, 0, 0.5)",
               zIndex: 4,
             }}
@@ -89,39 +88,15 @@ const Dashboard = () => {
 
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
               <Grid container spacing={3}>
-                <Grid item xs={12} md={8} lg={9}>
-                  <Paper
-                    sx={{
-                      p: 2,
-                      display: "flex",
-                      flexDirection: "column",
-                      height: 240,
-                    }}
-                  >
-                    <Typography variant="h5" component="h2" gutterBottom>
-                      Existing Resources
-                    </Typography>{" "}
-                  </Paper>
+                <Grid item xs={12}>
+                  <BookingAnalysis />
                 </Grid>
-                <Grid item xs={12} md={4} lg={3}>
-                  <Paper
-                    sx={{
-                      p: 2,
-                      display: "flex",
-                      flexDirection: "column",
-                      height: 240,
-                    }}
-                  >
-                    <Typography variant="h5" component="h2" gutterBottom>
-                      Existing Resources
-                    </Typography>{" "}
-                  </Paper>
-                </Grid>
+
                 <Grid item xs={12}>
                   <Paper
                     sx={{ p: 2, display: "flex", flexDirection: "column" }}
                   >
-                    <Orders />
+                    <BookingTable />
                   </Paper>
                 </Grid>
                 <Grid item xs={12}>
@@ -133,7 +108,7 @@ const Dashboard = () => {
                 </Grid>
               </Grid>
 
-              <Copyright sx={{ pt: 4 }} />
+              <Copyright />
             </Container>
           </div>
         </Box>
