@@ -14,11 +14,9 @@ import Link from "@mui/material/Link";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import { useNavigate } from "react-router-dom";
-
 import UniversityLogo from "../../../public/assets/images/University_of_Moratuwa_logo.png";
 import BackgroundImage from "../../../public/assets/images/background.jpg";
 import authServices from 'src/services/AuthServices';
-import {useNavigate} from "react-router-dom";
 import {useDispatch} from 'react-redux';
 import {enqueueUser, removeUser} from 'src/redux/user/actions';
 import ToasterMessage from "src/helpers/ToasterMessage";

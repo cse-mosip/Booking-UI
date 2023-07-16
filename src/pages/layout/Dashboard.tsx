@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Grid,
   Container,
@@ -15,6 +15,9 @@ import AppbarComponent from "src/components/AppbarComponent";
 import DrawerComponent from "src/components/DrawerComponent";
 import BackgroundImage from "../../../public/assets/images/background.jpg";
 import Orders from "./Orders";
+import resourcesService from "src/services/ResourcesServices";    
+import {useDispatch} from 'react-redux';
+import {enqueueResources} from 'src/redux/resource/actions';
 
 const dashboardTheme = createTheme({
   palette: {
@@ -33,6 +36,19 @@ const Dashboard = () => {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    SetResources();
+  }, [])
+
+  const SetResources = async () => {
+      const resourceData = await resourcesService.getResources();
+      if(resourceData?.status){
+          dispatch(enqueueResources(resourceData.data));
+      }
+  }
 
   return (
     <ThemeProvider theme={dashboardTheme}>
