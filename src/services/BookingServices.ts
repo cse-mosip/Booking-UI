@@ -13,13 +13,13 @@ const getBookings = async () => {
       ToasterMessage.errorMessage({
         main_part: 'Could not get bookings!',
       });
-      return([]);
+      return(bookingsData);
     }
   } catch (error) {
     ToasterMessage.errorMessage({
         error: error,
     });
-    return([]);
+    return(bookingsData);
   }
 };
 
