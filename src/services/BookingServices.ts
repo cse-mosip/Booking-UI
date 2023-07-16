@@ -2,6 +2,7 @@ import axios from "src/services/HttpServices";
 import ToasterMessage from "src/helpers/ToasterMessage";
 import { BookingForm } from 'src/types';
 import { bookingsData } from "src/pages/view-bookings/examples";
+import { formatDate } from "src/helpers/utils";
 
 
 const getBookings = async () => {
@@ -29,7 +30,7 @@ const bookResource = async (data :BookingForm) => {
     resource_id: data.resourceId,
     reason: data.reason,
     count: data.count,
-    booked_date: data.bookingDate,
+    booked_date: formatDate(data.bookingDate),
     start_time: data.startDateTime,
     end_time: data.endDateTime,
   };

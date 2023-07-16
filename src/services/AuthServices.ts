@@ -6,6 +6,8 @@ import {enqueueUser, removeUser} from 'src/redux/user/actions';
 import { useSelector } from 'react-redux';
 import { User } from 'src/types';
 import { AppState } from 'src/redux/reducer';
+import ToasterMessage from "src/helpers/ToasterMessage";
+
 // import axios from "src/services/HttpServices";
 
 const baseURL = import.meta.env.REACT_APP_BACKEND_URL;
@@ -24,11 +26,13 @@ const login = async (username: string, password: string) => {
   try {
     const response = await axios.post("/auth/login", data);
     if(response.status === 200 || response.status === 202){
-      console.log('token',response.data.data.token);
       Token.setAccessToken(response.data.data.token);
       return response.data
     }
   } catch (error) {
+    ToasterMessage.errorMessage({
+      custom_message: "Login failed!",
+    });
     throw error;
   }
 };
