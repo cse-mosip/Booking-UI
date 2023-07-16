@@ -46,6 +46,13 @@ const getBookedTimeSlots = async (data :any) => {
   }
 };
 
+const getBookingsForResource = async (date:Date, id:number)=>{
+  try{
+    const res = await axios.get('/');
+  }catch (e) {
+
+  }
+}
 
 
 export default {
