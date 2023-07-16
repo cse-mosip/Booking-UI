@@ -13,7 +13,6 @@ import Copyright from "src/components/Copyright";
 import AppbarComponent from "src/components/AppbarComponent";
 import DrawerComponent from "src/components/DrawerComponent";
 import BackgroundImage from "../../../public/assets/images/background.jpg";
-import Orders from "./Orders";
 import BookingTable from "./BookingsTable";
 import BookingAnalysis from "./BookingAnalysis";
 import resourcesService from "src/services/ResourcesServices";    
@@ -99,13 +98,6 @@ const Dashboard = () => {
                     sx={{ p: 2, display: "flex", flexDirection: "column" }}
                   >
                     <BookingTable />
-                  </Paper>
-                </Grid>
-                <Grid item xs={12}>
-                  <Paper
-                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
-                  >
-                    <Orders />
                   </Paper>
                 </Grid>
               </Grid>

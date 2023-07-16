@@ -5,12 +5,15 @@ import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { BookingCard } from "./BookingCard";
+import BookingCard from "./BookingCard";
 import BookingServices from "src/services/BookingServices";
 import AppbarComponent from "src/components/AppbarComponent";
 import DrawerComponent from "src/components/DrawerComponent";
 import Copyright from "src/components/Copyright";
 import { Toolbar } from "@mui/material";
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from 'src/redux/reducer';
+import { Resource } from 'src/types';
 
 const dashboardTheme = createTheme({
   palette: {
@@ -24,6 +27,7 @@ const dashboardTheme = createTheme({
 });
 
 export default function ViewBookingsContainer(): JSX.Element {
+  const resources: Resource[] | null = useSelector((state: AppState) => state.resources.resources);
   const [bookingsData, setBookingsData] = useState([]);
   const [open, setOpen] = useState(false);
 
@@ -71,9 +75,29 @@ export default function ViewBookingsContainer(): JSX.Element {
               VIEW BOOKINGS LIST
             </Typography>
             <Box sx={{ mt: 2 }}>
-              {bookingsData.map((booking) => (
-                <BookingCard key={booking.booking_id} booking={booking} />
-              ))}
+              {bookingsData.length === 0 ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "200px",
+                    backgroundColor: "#f0f0f0",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <Typography variant="h6" color="textSecondary">
+                    There are no bookings available.
+                  </Typography>
+                </Box>
+              ) : (
+                bookingsData.map((booking, index) => {
+                  const resource = resources?.find((res) => res.id === booking.resource);
+                  return (
+                    <BookingCard key={index} booking={booking} resource={resource} />
+                  )
+                })
+              )}
             </Box>
           </Paper>
           <Copyright />

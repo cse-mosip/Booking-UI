@@ -1,11 +1,9 @@
-import React from "react";
-import Grid from "@mui/material/Grid";
+import { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
-import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PersonIcon from "@mui/icons-material/Person";
@@ -22,86 +20,183 @@ import {
   Cell,
 } from "recharts";
 
-import { bookingsData } from "../view-bookings/examples";
+import BookingServices from "src/services/BookingServices";
 
 interface Booking {
-  booking_id: string;
-  booked_resource_id: string;
-  resource_name: string;
-  username: string;
+  id: number;
+  resource: number;
+  userId: string;
+  bookedDate: string;
+  startTime: string;
+  endTime: string;
   count: number;
-  datesTimes: { date: string; start: string; end: string }[];
   reason: string;
+  status: string;
 }
 
-const getBookingsCount = (): number => {
-  return bookingsData.length;
-};
+const BookingAnalysis: React.FC = () => {
+  const [bookingsData, setBookingsData] = useState<Booking[]>([]);
 
-const getMostAskedDatetimes = (): { datetime: string; count: number }[] => {
-  // Calculate the most asked datetimes
-  const datetimeCounts: { [key: string]: number } = {};
-  bookingsData.forEach((booking: Booking) => {
-    booking.datesTimes.forEach((datetime) => {
-      const datetimeString = `${datetime.date} ${datetime.start}-${datetime.end}`;
+  useEffect(() => {
+    const fetchBookingsData = async () => {
+      try {
+        const data = await BookingServices.getBookings();
+        setBookingsData(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchBookingsData();
+  }, []);
+
+  const getBookingsCount = (): number => {
+    return bookingsData.length;
+  };
+
+  const getMostAskedDatetimes = (): { datetime: string; count: number }[] => {
+    const datetimeCounts: { [key: string]: number } = {};
+    bookingsData.forEach((booking: Booking) => {
+      const datetimeString = `${booking.bookedDate} ${booking.startTime}-${booking.endTime}`;
       if (datetimeCounts[datetimeString]) {
         datetimeCounts[datetimeString]++;
       } else {
         datetimeCounts[datetimeString] = 1;
       }
     });
-  });
-  const sortedDatetimes = Object.entries(datetimeCounts).sort(
-    (a: [string, number], b: [string, number]) => b[1] - a[1]
-  );
-  return sortedDatetimes.slice(0, 3).map(([datetime, count]) => ({
-    datetime,
-    count,
-  }));
-};
+    const sortedDatetimes = Object.entries(datetimeCounts).sort(
+      (a: [string, number], b: [string, number]) => b[1] - a[1]
+    );
+    return sortedDatetimes.slice(0, 3).map(([datetime, count]) => ({
+      datetime,
+      count,
+    }));
+  };
 
-const getMostActiveUsers = (): { user: string; count: number }[] => {
-  // Calculate the most active users
-  const userCounts: { [key: string]: number } = {};
-  bookingsData.forEach((booking: Booking) => {
-    const username = booking.username;
-    if (userCounts[username]) {
-      userCounts[username]++;
-    } else {
-      userCounts[username] = 1;
-    }
-  });
-  const sortedUsers = Object.entries(userCounts).sort(
-    (a: [string, number], b: [string, number]) => b[1] - a[1]
-  );
-  return sortedUsers.slice(0, 3).map(([user, count]) => ({ user, count }));
-};
+  const getMostActiveUsers = (): { user: string; count: number }[] => {
+    const userCounts: { [key: string]: number } = {};
+    bookingsData.forEach((booking: Booking) => {
+      const username = booking.userId;
+      if (userCounts[username]) {
+        userCounts[username]++;
+      } else {
+        userCounts[username] = 1;
+      }
+    });
+    const sortedUsers = Object.entries(userCounts).sort(
+      (a: [string, number], b: [string, number]) => b[1] - a[1]
+    );
+    return sortedUsers.slice(0, 3).map(([user, count]) => ({ user, count }));
+  };
 
-const getMostUsedResources = (): { resource: string; count: number }[] => {
-  // Calculate the most used resources
-  const resourceCounts: { [key: string]: number } = {};
-  bookingsData.forEach((booking: Booking) => {
-    const resourceName = booking.resource_name;
-    if (resourceCounts[resourceName]) {
-      resourceCounts[resourceName]++;
-    } else {
-      resourceCounts[resourceName] = 1;
-    }
-  });
-  const sortedResources = Object.entries(resourceCounts).sort(
-    (a: [string, number], b: [string, number]) => b[1] - a[1]
-  );
-  return sortedResources.slice(0, 3).map(([resource, count]) => ({
-    resource,
-    count,
-  }));
-};
+  const getMostUsedResources = (): { resource: string; count: number }[] => {
+    const resourceCounts: { [key: string]: number } = {};
+    bookingsData.forEach((booking: Booking) => {
+      const resourceName = booking.resource.toString();
+      if (resourceCounts[resourceName]) {
+        resourceCounts[resourceName]++;
+      } else {
+        resourceCounts[resourceName] = 1;
+      }
+    });
+    const sortedResources = Object.entries(resourceCounts).sort(
+      (a: [string, number], b: [string, number]) => b[1] - a[1]
+    );
+    return sortedResources.slice(0, 3).map(([resource, count]) => ({
+      resource,
+      count,
+    }));
+  };
 
-const BookingAnalysis: React.FC = () => {
+  const getAverageBookingDuration = (): number => {
+    if (bookingsData.length === 0) return 0;
+
+    let totalDuration = 0;
+    bookingsData.forEach((booking: Booking) => {
+      const startDateTime = new Date(
+        `${booking.bookedDate} ${booking.startTime}`
+      );
+      const endDateTime = new Date(`${booking.bookedDate} ${booking.endTime}`);
+      const duration = endDateTime.getTime() - startDateTime.getTime();
+      totalDuration += duration;
+    });
+
+    return totalDuration / bookingsData.length;
+  };
+
+  const getBookingStatusDistribution = (): {
+    status: string;
+    count: number;
+  }[] => {
+    const statusCounts: { [key: string]: number } = {};
+    bookingsData.forEach((booking: Booking) => {
+      const status = booking.status;
+      if (statusCounts[status]) {
+        statusCounts[status]++;
+      } else {
+        statusCounts[status] = 1;
+      }
+    });
+    return Object.entries(statusCounts).map(([status, count]) => ({
+      status,
+      count,
+    }));
+  };
+
+  const getResourceUtilization = (): {
+    resource: string;
+    utilization: number;
+  }[] => {
+    const resourceUtilization: { [key: string]: number } = {};
+    bookingsData.forEach((booking: Booking) => {
+      const resourceName = booking.resource.toString();
+      const startDateTime = new Date(
+        `${booking.bookedDate} ${booking.startTime}`
+      );
+      const endDateTime = new Date(`${booking.bookedDate} ${booking.endTime}`);
+      const duration = endDateTime.getTime() - startDateTime.getTime();
+      if (resourceUtilization[resourceName]) {
+        resourceUtilization[resourceName] += duration;
+      } else {
+        resourceUtilization[resourceName] = duration;
+      }
+    });
+
+    const availableTime = 24 * 60 * 60 * 1000; // Assuming 24 hours available for each resource
+    return Object.entries(resourceUtilization).map(
+      ([resource, utilization]) => ({
+        resource,
+        utilization: (utilization / availableTime) * 100, // Calculate utilization rate as a percentage
+      })
+    );
+  };
+
+  const getPopularBookingReasons = (): { reason: string; count: number }[] => {
+    const reasonCounts: { [key: string]: number } = {};
+    bookingsData.forEach((booking: Booking) => {
+      const reason = booking.reason;
+      if (reasonCounts[reason]) {
+        reasonCounts[reason]++;
+      } else {
+        reasonCounts[reason] = 1;
+      }
+    });
+    const sortedReasons = Object.entries(reasonCounts).sort(
+      (a: [string, number], b: [string, number]) => b[1] - a[1]
+    );
+    return sortedReasons
+      .slice(0, 3)
+      .map(([reason, count]) => ({ reason, count }));
+  };
+
   const bookingsCount = getBookingsCount();
   const mostAskedDatetimes = getMostAskedDatetimes();
   const mostActiveUsers = getMostActiveUsers();
   const mostUsedResources = getMostUsedResources();
+  const averageBookingDuration = getAverageBookingDuration();
+  const bookingStatusDistribution = getBookingStatusDistribution();
+  const resourceUtilization = getResourceUtilization();
+  const popularBookingReasons = getPopularBookingReasons();
 
   const renderCustomBarLabel = (props: any) => {
     const { x, y, width, value } = props;
@@ -159,9 +254,9 @@ const BookingAnalysis: React.FC = () => {
                 {mostActiveUsers.map((entry, index) => (
                   <Cell
                     key={index}
-                    fill={`#${Math.floor(
-                      Math.random() * 16777215
-                    ).toString(16)}`}
+                    fill={`#${Math.floor(Math.random() * 16777215).toString(
+                      16
+                    )}`}
                   />
                 ))}
               </Pie>
@@ -169,10 +264,7 @@ const BookingAnalysis: React.FC = () => {
           </CardContent>
         </Card>
         <Card sx={{ flex: 1, minWidth: 300, margin: 1 }}>
-          <CardHeader
-            avatar={<BusinessIcon />}
-            title="Most Used Resources"
-          />
+          <CardHeader avatar={<BusinessIcon />} title="Most Used Resources" />
           <CardContent>
             <BarChart width={300} height={200} data={mostUsedResources}>
               <CartesianGrid strokeDasharray="3 3" />

@@ -1,25 +1,23 @@
 import axios from "src/services/HttpServices";
 import ToasterMessage from "src/helpers/ToasterMessage";
 import { BookingForm } from 'src/types';
-import { bookingsData } from "src/pages/view-bookings/examples";
-
 
 const getBookings = async () => {
   try {
     const response = await axios.get("/bookings");
     if (response.status === 200) {
-      return(response.data);
+      return(response.data.data);
     } else {
       ToasterMessage.errorMessage({
         main_part: 'Could not get bookings!',
       });
-      return(bookingsData);
+      return([]);
     }
   } catch (error) {
     ToasterMessage.errorMessage({
         error: error,
     });
-    return(bookingsData);
+    return([]);
   }
 };
 

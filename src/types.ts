@@ -3,6 +3,7 @@ export type Resource = {
     name: string;
     category: string;
     description: string;
+    count: number;
 }
 
 export type Booking = {
