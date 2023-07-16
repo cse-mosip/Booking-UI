@@ -1,8 +1,7 @@
 export type Resource = {
     id: string;
     name: string;
-    category: string;
-    description: string;
+    count: number;
 }
 
 export type Booking = {

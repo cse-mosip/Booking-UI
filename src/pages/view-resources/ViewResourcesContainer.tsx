@@ -13,9 +13,11 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Avatar, IconButton } from "@mui/material";
+import {Avatar, IconButton, TextField} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import resourcesServices from "src/services/ResourcesServices";
+import {Resource} from "../../types";
+import {number} from "yup";
 
 function FutureBookingsTable({ bookings } :any) {
   return (
@@ -45,30 +47,96 @@ function FutureBookingsTable({ bookings } :any) {
 }
 
 
-function ResourceCard({ resource } :any) {
+function ResourceCard({ resource } : { resource:Resource }) {
   const [expanded, setExpanded] = useState(false);
+  const [editStarted, setEditStarted] = useState(false);
+  const [name, setName] = useState<String>('');
+  const [nameError, setNameError] = useState(false);
+  const [count, setCount] = useState<Number>(0);
+  const [countError, setCountError] = useState(false);
   const navigate = useNavigate();
+
+  const futureBookings= [
+    { id: 3, booker: "Emily Wilson", date: "2023-07-19", users: 4, time: "9:30 AM",  duration: "2hrs" },
+    { id: 4, booker: "John Smith", date: "2023-07-20", users: 6, time: "11:00 AM",  duration: "2hrs" },
+  ];
 
   const handleExpand = () => {
     setExpanded(!expanded);
   };
 
-  const handleEditResource = () => {
+  const handleEditStart = (e) => {
     // Handle edit resource action
-    console.log(`Edit resource with id: ${resource.resource_id}`);
+    setExpanded(false);
+    setName(resource.name);
+    setCount(resource.count)
+    setEditStarted(true);
   };
 
-  return (
-    <Card sx={{ mt: 2 }} onClick={handleExpand} style={{ cursor: "pointer" }}>
-      <CardContent>
-        <Typography variant="subtitle1" >
-          Resource Name: {resource.resource_name}
-        </Typography>
-        <Typography variant="body2" color='textSecondary'>Resource ID: {resource.resource_id}</Typography>
+  const handleUpdate = (e) =>{
+    if(!nameError && !countError){
+      //send update request
+    }
+  }
 
-        <Typography variant="body2" color="textSecondary">
-          Count: {resource.count}
-        </Typography>
+  return (
+    <Card sx={{ mt: 2 }}  style={{ cursor: "pointer" }}>
+      <CardContent>
+        {
+          !editStarted?(
+            <Typography variant="subtitle1" >
+              Resource Name: {resource.name}
+            </Typography>
+          ):(
+            <>
+            <Typography variant="subtitle1" >
+              Resource Name:
+            </Typography>
+            <TextField size={"small"} error={nameError} helperText={nameError?'Invalid name':''} aria-errormessage={'text'} value={name} fullWidth={true} onChange={
+              (e)=>{
+                setName(e.target.value)
+                if(e.target.value.length===0){
+                  setNameError(true);
+                }
+              }
+            }  />
+            </>
+          )
+        }
+
+        <Typography variant="body2" color='textSecondary'>Resource ID: {resource.id}</Typography>
+
+        {
+          !editStarted?(
+            <Typography variant="body2" color="textSecondary">
+              Count: {resource.count}
+            </Typography>
+          ):(
+            <>
+            <Typography variant="body2" color="textSecondary">
+              Count: {resource.count}
+            </Typography>
+              <TextField size={"small"} inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}  error={countError} helperText={countError?'Invalid count':''} value={count} fullWidth={true}
+                onChange={
+                  (e)=>{
+                    const temp = e.target.value;
+                    if(temp!==''){
+                      setCount(parseInt(temp))
+                    }else{
+                      setCount(0);
+                    }
+                    if(temp===''||parseInt(temp)===0){
+                      setCountError(true)
+                    }else{
+                      setCountError(false);
+                    }
+                  }
+                }
+              />
+            </>
+          )
+        }
+
 
         <CardActions disableSpacing>
         <IconButton onClick={handleExpand} aria-expanded={expanded}>
@@ -80,8 +148,10 @@ function ResourceCard({ resource } :any) {
         </IconButton>
       </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <FutureBookingsTable bookings={resource.futureBookings} />
+          <FutureBookingsTable bookings={futureBookings} />
         </Collapse>
+
+
         <Box
           sx={{
             mt: 2,
@@ -89,48 +159,42 @@ function ResourceCard({ resource } :any) {
             justifyContent: "flex-end",
           }}
         >
-          <Button
-            variant="contained"
-            onClick={handleEditResource}
-            sx={{ backgroundColor: "green", color: "white" }}
-          >
-            Edit Resource
-          </Button>
+          {
+            !editStarted?(
+              <Button
+                variant="contained"
+                onClick={handleEditStart}
+                sx={{ backgroundColor: "green", color: "white" }}
+              >
+                Edit Resource
+              </Button>
+            ):(
+              <Button
+                variant="contained"
+                onClick={handleUpdate}
+                sx={{ backgroundColor: "blue", color: "white" }}
+              >
+                Update
+              </Button>
+            )
+          }
+
+          {
+            editStarted&&(
+              <Button onClick={
+                (e)=>{
+                  setEditStarted(false);
+                }
+              } >Cancel</Button>
+            )
+          }
         </Box>
+
+
       </CardContent>
     </Card>
   );
 }
-
-const resourcesData = [
-  {
-    resource_id: 1,
-    resource_name: "Conference Room C",
-    count:40,
-    futureBookings: [
-      { id: 1, booker: "Sarah Johnson", date: "2023-07-17", users: 8, time: "10:00 AM", duration: "2hrs" },
-      { id: 2, booker: "Michael Brown", date: "2023-07-18", users: 10, time: "2:00 PM",  duration: "2hrs" },
-    ],
-  },
-  {
-    resource_id: 2,
-    resource_name: "Studio D",
-    count:40,
-    futureBookings: [
-      { id: 3, booker: "Emily Wilson", date: "2023-07-19", users: 4, time: "9:30 AM",  duration: "2hrs" },
-      { id: 4, booker: "John Smith", date: "2023-07-20", users: 6, time: "11:00 AM",  duration: "2hrs" },
-    ],
-  },
-  {
-    resource_id: 3,
-    resource_name: "Lab E",
-    count:40,
-    futureBookings: [
-      { id: 5, booker: "Jane Doe", date: "2023-07-21", users: 5, time: "3:00 PM",  duration: "2hrs" },
-      { id: 6, booker: "Alex Johnson", date: "2023-07-22", users: 3, time: "1:30 PM",  duration: "2hrs" },
-    ],
-  },
-];
 
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -139,7 +203,7 @@ const defaultTheme = createTheme();
 export default function ViewResourcesContainer() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [resourceData, setResourceData] = useState([]);
+  const [resourceData, setResourceData] = useState<Resource[]>([]);
 
   useEffect(
     ()=>{
@@ -147,10 +211,11 @@ export default function ViewResourcesContainer() {
       const fetch = async ()=>{
         setLoading(true);
         const response = await resourcesServices.getResources();
-        setResourceData(response);
+        setResourceData(response.data);
         setLoading(false);
       }
       fetch();
+
     },[]
   )
   const handleHomeClick = () => {
@@ -191,8 +256,8 @@ export default function ViewResourcesContainer() {
             VIEW RESOURCES LIST
           </Typography>
           <Box sx={{ mt: 2 }}>
-            {resourcesData.map((resource) => (
-              <ResourceCard key={resource.resource_id} resource={resource} />
+            {resourceData.map((resource) => (
+              <ResourceCard key={resource.id} resource={resource} />
             ))}
           </Box>
         </Paper>
