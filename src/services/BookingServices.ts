@@ -1,6 +1,8 @@
 import axios from "src/services/HttpServices";
 import ToasterMessage from "src/helpers/ToasterMessage";
 import { BookingForm } from 'src/types';
+import { bookingsData } from "src/pages/view-bookings/examples";
+
 
 const getBookings = async () => {
   try {
@@ -11,10 +13,13 @@ const getBookings = async () => {
       ToasterMessage.errorMessage({
         main_part: 'Could not get bookings!',
       });
-      return(false);
+      return([]);
     }
   } catch (error) {
-    return(false);
+    ToasterMessage.errorMessage({
+        error: error,
+    });
+    return([]);
   }
 };
 
@@ -93,7 +98,7 @@ const deleteBooking = async (bookingId: number) => {
   }
 };
 
-const updateBookingStatus = async (bookingId: number, status: string) => {
+const updateBookingStatus = async (bookingId: string, status: string) => {
   const bookingStatus = { status: status };
   try {
     const response = await axios.patch(
