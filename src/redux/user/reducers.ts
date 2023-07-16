@@ -6,7 +6,7 @@ import {
   } from './types';
   
   const initialState: UserState = {
-    user: {username:'nimanthadils'},
+    user: null,
   };
   
   export function userReducer(state = initialState, action: UserActionTypes): UserState {

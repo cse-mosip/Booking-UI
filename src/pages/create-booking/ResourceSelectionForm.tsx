@@ -79,14 +79,20 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
     const formattedDate = `${year}-${month}-${day}`;
 
     const options: Option[] = [];
-    resources.forEach((resource) => {
-      const option: Option = {
-        id: parseInt(resource.id),
-        value: resource.name,
-        label: resource.name,
-      };
-      options.push(option);
-    });
+    if(resources){
+        resources.forEach((resource) => {
+            const option: Option = {
+              id: parseInt(resource.id),
+              value: resource.name,
+              label: resource.name,
+            };
+            options.push(option);
+        });
+        console.log('options: ',options);
+    }
+
+    console.log('adoo');
+    
 
     const handleBookingStartTime = (time :any) => {
         props.formik.values.bookingStartTime = time;
@@ -115,9 +121,9 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
             setTimeout(() => {
               setLoader(false);
             }, 1000);
-            if(response){
+            if(response.status === 'OK'){
                 setErrorInBookedSlots(null);
-                setTimeSlots(getTimeSlots(response))
+                setTimeSlots(getTimeSlots(response.data))
             }else{
                 setErrorInBookedSlots('Could not get time slots!');
             }
@@ -196,9 +202,14 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
                 </Grid>
                 {flagForBookingDate ? 
                     <Grid item xs={12} sm={12}>
-                        <Typography variant="h6" gutterBottom>
-                            Booked slots for your selected date:
-                        </Typography>
+                        {timeSlots.length > 0 || errorInBookedSlots?
+                            <Typography variant="h6" gutterBottom>
+                                Booked slots for your selected date:
+                            </Typography>
+                            :
+                            null
+                        }
+
                         <Stack direction="column" spacing={1}>
 
                             {
