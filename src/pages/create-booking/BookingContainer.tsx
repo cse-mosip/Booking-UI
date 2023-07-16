@@ -105,15 +105,13 @@ export default function BookingContainer() {
       !(Object.keys(formikForm1.errors).length > 0)
     ) {
       formikForm1.handleSubmit();
-    } else if (activeStep === 1) {
-      setLoader(true);
-      formValues["startDateTime"] = formatDate(formValues.bookingStartTime);
-      formValues["endDateTime"] = formatDate(formValues.bookingEndTime);
-      formValues["count"] = formValues.occupants;
-      formValues["resourceId"] = resources.find(
-        (item) => item.name === formValues.ResourceName
-      ).id;
-      formValues["username"] = user.username;
+    }else if(activeStep === 1){
+      setLoader(true)
+      formValues['startDateTime'] = formatDate(formValues.bookingStartTime);
+      formValues['endDateTime'] = formatDate(formValues.bookingEndTime);
+      formValues['count'] = formValues.occupants;
+      formValues['resourceId'] = String((resources.find((item) => item.name === formValues.ResourceName)).id);
+      formValues['username'] = user.username;
       console.log(formValues);
       const response = await bookingService.bookResource(formValues);
       setTimeout(() => {
@@ -170,7 +168,7 @@ export default function BookingContainer() {
                   Thank you for your booking.
                 </Typography>
                 <Typography variant="subtitle1">
-                  Your booking number is #2001539. We have recorded your booking
+                  We have recorded your booking
                   confirmation, and will send you an update when your booking is
                   ready.
                 </Typography>

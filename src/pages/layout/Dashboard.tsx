@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Grid,
   Container,
@@ -18,6 +18,7 @@ import Orders from "./Orders";
 import BookingTable from "./BookingsTable";
 import BookingAnalysis from "./BookingAnalysis";
 
+
 const dashboardTheme = createTheme({
   palette: {
     primary: {
@@ -35,6 +36,21 @@ const Dashboard = () => {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setTimeout(() => {
+      SetResources();
+    }, 1000);
+  }, [])
+
+  const SetResources = async () => {
+      const resourceData = await resourcesService.getResources();
+      if(resourceData?.status){
+          dispatch(enqueueResources(resourceData.data));
+      }
+  }
 
   return (
     <ThemeProvider theme={dashboardTheme}>
