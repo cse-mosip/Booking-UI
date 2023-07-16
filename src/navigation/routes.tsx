@@ -12,8 +12,8 @@ const AppRoutes = () => {
     return (
         <BrowserRouter basename={process.env.PUBLIC_URL}>
             <Routes>
-                <Route path="/" element={<Dashboard/>}/>
-                <Route path="/login" element={<LoginContainer/>} />
+                <Route path="/" element={<LoginContainer/>} />
+                <Route path="/dashboard" element={<Dashboard/>}/>
                 <Route path="/book" element={<BookingContainer/>}/>
                 <Route path="/bookings" element={<ViewBookingsContainer/>}/>
                 <Route path="/addresource" element={<AddNewResourceContainer/>}/>
