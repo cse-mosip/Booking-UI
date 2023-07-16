@@ -168,7 +168,7 @@ export default function BookingContainer() {
                   Thank you for your booking.
                 </Typography>
                 <Typography variant="subtitle1">
-                  Your booking number is #2001539. We have recorded your booking
+                  We have recorded your booking
                   confirmation, and will send you an update when your booking is
                   ready.
                 </Typography>
