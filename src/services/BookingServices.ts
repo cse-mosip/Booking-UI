@@ -20,16 +20,17 @@ const getBookings = async () => {
 
 const bookResource = async (data :BookingForm) => {
   const bookingData = {
-    username: data.username,
-    resourceId: data.resourceId,
+    user_id: data.username,
+    resource_id: data.resourceId,
     reason: data.reason,
     count: data.count,
-    startDateTime: data.startDateTime,
-    endDateTime: data.endDateTime,
+    booked_date: data.bookingDate,
+    start_time: data.startDateTime,
+    end_time: data.endDateTime,
   };
   try {
     const response = await axios.post("/bookings", bookingData);
-    if (response.status === 200) {
+    if (response.status === 201) {
       return(response.data);
     } else {
       ToasterMessage.errorMessage({
