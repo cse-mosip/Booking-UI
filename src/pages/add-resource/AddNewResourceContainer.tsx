@@ -18,6 +18,7 @@ import { Avatar, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 import * as yup from "yup";
+import ResourceServices from "src/services/ResourcesServices";
 
 function Copyright() {
   return (
@@ -56,7 +57,6 @@ export default function AddNewResourceContainer() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [resourceName, setResourceName] = useState("");
   const [resourceCount, setResourceCount] = useState(1);
-  const [successful, setSuccessful] = useState(false);
   const [resourceNameError, setResourceNameError] = useState("");
   const [resourceCountError, setResourceCountError] = useState("");
 
@@ -125,10 +125,13 @@ export default function AddNewResourceContainer() {
         }
         break;
       case 1:
-        // TODO: call API to create resource
-        setSuccessful(true);
-        console.log("Resource created");
-        setActiveStep(activeStep + 1);
+        const response = await ResourceServices.createResource(
+          resourceName,
+          resourceCount
+        );
+        if (response) {
+          setActiveStep(activeStep + 1);
+        }
         break;
       default:
         throw new Error("Unknown step");
@@ -186,42 +189,31 @@ export default function AddNewResourceContainer() {
           </Stepper>
           {activeStep === steps.length ? (
             <React.Fragment>
-              {successful && (
-                <React.Fragment>
-                  <Typography variant="h5" gutterBottom>
-                    The resource was successfully created.
-                  </Typography>
-                  <Typography variant="subtitle1">
-                    Resource Name: {resourceName}
-                  </Typography>
-                  <Typography variant="subtitle1">
-                    Resource Count: {resourceCount}
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      marginTop: 2,
-                    }}
-                  >
-                    <Button
-                      component={RouterLink}
-                      to="/"
-                      variant="contained"
-                      color="primary"
-                    >
-                      Back Home
-                    </Button>
-                  </Box>
-                </React.Fragment>
-              )}
-              {!successful && (
-                <React.Fragment>
-                  <Typography variant="h5" gutterBottom>
-                    The resource could not be created.
-                  </Typography>
-                </React.Fragment>
-              )}
+              <Typography variant="h5" gutterBottom>
+                The resource was successfully created.
+              </Typography>
+              <Typography variant="subtitle1">
+                Resource Name: {resourceName}
+              </Typography>
+              <Typography variant="subtitle1">
+                Resource Count: {resourceCount}
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: 2,
+                }}
+              >
+                <Button
+                  component={RouterLink}
+                  to="/"
+                  variant="contained"
+                  color="primary"
+                >
+                  Back Home
+                </Button>
+              </Box>
             </React.Fragment>
           ) : (
             <React.Fragment>

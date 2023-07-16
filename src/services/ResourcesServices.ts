@@ -24,7 +24,7 @@ const createResource = async (resourceName: string, resourceCount: number) => {
   const resourceData = { name: resourceName, count: resourceCount };
   try {
     const response = await axios.post("/resources", resourceData);
-    if (response.status === 200) {
+    if (response.status === 201) {
       return response.data;
     } else {
       ToasterMessage.errorMessage({
