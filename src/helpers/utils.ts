@@ -14,8 +14,8 @@ export function getTimeSlots(availableSlots: any[]): string[] {
     const timeSlots: string[] = [];
   
     for (const slot of availableSlots) {
-      const startDateTime = new Date(slot.startDateTime);
-      const endDateTime = new Date(slot.endDateTime);
+      const startDateTime = new Date(slot.startTime);
+      const endDateTime = new Date(slot.endTime);
   
       const startTime = startDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const endTime = endDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });

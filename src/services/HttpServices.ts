@@ -2,7 +2,7 @@ import Axios from "axios";
 import Token from "src/services/token/Token";
 import ToasterMessage from "src/helpers/ToasterMessage";
 import authServices from 'src/services/AuthServices';
-// --When using refresh token 
+// --When using refresh token
 // import jwtDecode from "jwt-decode";
 // import dayJS from "dayjs";
 
@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use((response) => {
     return Promise.reject(error);
 });
 
-// --When using refresh token 
+// --When using refresh token
 // axiosInstance.interceptors.request.use(async (req) => {
 //     if (!bearer_token) {
 //         bearer_token = Token.getAccessToken();
@@ -46,7 +46,7 @@ axiosInstance.interceptors.response.use((response) => {
 //     if (bearer_token) {
 //         bearer_token = Token.getAccessToken();
 //         const user = await jwtDecode(bearer_token);
-//         // unix time expired 
+//         // unix time expired
 //         const isExpired = dayJS(user.exp * 1000).isBefore(dayJS());
 //         // console.log("expired :", isExpired);
 //         if (!isExpired) {

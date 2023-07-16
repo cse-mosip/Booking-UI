@@ -88,11 +88,7 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
             };
             options.push(option);
         });
-        console.log('options: ',options);
     }
-
-    console.log('adoo');
-    
 
     const handleBookingStartTime = (time :any) => {
         props.formik.values.bookingStartTime = time;
