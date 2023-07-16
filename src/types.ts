@@ -2,10 +2,12 @@ export type Resource = {
     id: string;
     name: string;
     count: number;
+    bookings: Booking[];
 }
 
 export type Booking = {
     ResourceName: string;
+    booker: string;
     reason?: string;
     bookingDate: any;
     bookingStartTime: any;

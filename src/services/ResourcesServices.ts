@@ -34,6 +34,22 @@ const createResource = async (resourceName: string, resourceCount: number) => {
   }
 };
 
+const updateResource = async(id:number,name, count)=>{
+  try {
+    const response = await axios.put(`/resources/${id}`,{name,count});
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: "Could not update the resource!",
+      });
+      return false;
+    }
+  } catch (error) {
+    return false;
+  }
+}
+
 const getResourceById = async (id: number) => {
   try {
     const response = await axios.get(`/resources/${id}`);
@@ -86,5 +102,6 @@ const getAvailableResourceCount = async (id: number, timeslot: string) => {
 
 export default {
     getResources,
-    createResource
+    createResource,
+  updateResource
 };
