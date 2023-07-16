@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import CssBaseline from "@mui/material/CssBaseline";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -11,16 +11,32 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Avatar, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { BookingCard } from "./BookingCard";
-import { bookingsData } from "./examples";
+import BookingServices from 'src/services/BookingServices';
 
 const defaultTheme = createTheme();
 
 export default function ViewBookingsContainer(): JSX.Element {
   const navigate = useNavigate();
+  const [bookingsData, setBookingsData] = useState([]);
+
 
   const handleHomeClick = (): void => {
     navigate("/");
   };
+
+
+  useEffect(() => {
+    const fetchBookingsData = async () => {
+      try {
+        const data = await BookingServices.getBookings();
+        setBookingsData(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchBookingsData();
+  }, []);
 
   return (
     <ThemeProvider theme={defaultTheme}>
