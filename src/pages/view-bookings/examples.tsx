@@ -25,10 +25,7 @@ export const bookingsData = [
     resource_name: "Lab E",
     username: "Michael Brown",
     count: 2,
-    datesTimes: [
-      { date: "2023-07-19", start: "10:00 AM", end: "01:00 PM" },
-      { date: "2023-07-20", start: "02:00 PM", end: "05:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-07-19", start: "10:00 AM", end: "01:00 PM" }],
     reason:
       "Science fair project experimentation to analyze the effects of different environmental factors on plant growth and development.",
   },
@@ -48,10 +45,7 @@ export const bookingsData = [
     resource_name: "Gymnasium",
     username: "David Johnson",
     count: 20,
-    datesTimes: [
-      { date: "2023-07-22", start: "01:00 PM", end: "04:00 PM" },
-      { date: "2023-07-23", start: "09:00 AM", end: "12:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-07-22", start: "01:00 PM", end: "04:00 PM" }],
     reason: "Fitness workshop for employees to promote health and well-being.",
   },
   {
@@ -60,11 +54,7 @@ export const bookingsData = [
     resource_name: "Library",
     username: "Sophia Miller",
     count: 1,
-    datesTimes: [
-      { date: "2023-07-24", start: "10:00 AM", end: "12:00 PM" },
-      { date: "2023-07-25", start: "02:00 PM", end: "04:00 PM" },
-      { date: "2023-07-26", start: "10:00 AM", end: "12:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-07-24", start: "10:00 AM", end: "12:00 PM" }],
     reason: "Book club meeting to discuss the latest bestseller.",
   },
   {
@@ -73,10 +63,7 @@ export const bookingsData = [
     resource_name: "Computer Lab",
     username: "Oliver Wilson",
     count: 6,
-    datesTimes: [
-      { date: "2023-07-27", start: "09:00 AM", end: "12:00 PM" },
-      { date: "2023-07-28", start: "01:00 PM", end: "04:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-07-27", start: "09:00 AM", end: "12:00 PM" }],
     reason:
       "Training session on software development for beginners to learn coding fundamentals.",
   },
@@ -86,12 +73,7 @@ export const bookingsData = [
     resource_name: "Art Studio",
     username: "Ava Davis",
     count: 4,
-    datesTimes: [
-      { date: "2023-07-29", start: "10:00 AM", end: "12:00 PM" },
-      { date: "2023-07-30", start: "02:00 PM", end: "05:00 PM" },
-      { date: "2023-07-31", start: "10:00 AM", end: "12:00 PM" },
-      { date: "2023-08-01", start: "02:00 PM", end: "05:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-07-29", start: "10:00 AM", end: "12:00 PM" }],
     reason: "Art workshop for intermediate-level painters.",
   },
   {
@@ -100,11 +82,7 @@ export const bookingsData = [
     resource_name: "Music Room",
     username: "James Thompson",
     count: 2,
-    datesTimes: [
-      { date: "2023-08-02", start: "01:00 PM", end: "04:00 PM" },
-      { date: "2023-08-03", start: "09:00 AM", end: "12:00 PM" },
-      { date: "2023-08-04", start: "01:00 PM", end: "04:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-08-02", start: "01:00 PM", end: "04:00 PM" }],
     reason: "Band rehearsal for the upcoming school concert.",
   },
   {
@@ -131,10 +109,7 @@ export const bookingsData = [
     resource_name: "Conference Room C",
     username: "Ryan Anderson",
     count: 2,
-    datesTimes: [
-      { date: "2023-08-07", start: "10:00 AM", end: "01:00 PM" },
-      { date: "2023-08-08", start: "02:00 PM", end: "05:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-08-07", start: "10:00 AM", end: "01:00 PM" }],
     reason: "Training session on effective communication skills.",
   },
   {
@@ -152,10 +127,7 @@ export const bookingsData = [
     resource_name: "Studio D",
     username: "Ryan Anderson",
     count: 4,
-    datesTimes: [
-      { date: "2023-08-10", start: "10:00 AM", end: "12:00 PM" },
-      { date: "2023-08-11", start: "02:00 PM", end: "04:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-08-10", start: "10:00 AM", end: "12:00 PM" }],
     reason: "Workshop on time management and productivity enhancement.",
   },
   {
@@ -164,10 +136,7 @@ export const bookingsData = [
     resource_name: "Computer Lab",
     username: "Michael Brown",
     count: 6,
-    datesTimes: [
-      { date: "2023-08-12", start: "09:00 AM", end: "12:00 PM" },
-      { date: "2023-08-13", start: "01:00 PM", end: "04:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-08-12", start: "09:00 AM", end: "12:00 PM" }],
     reason: "Training session on conflict resolution and teamwork.",
   },
   {
@@ -194,10 +163,7 @@ export const bookingsData = [
     resource_name: "Auditorium A",
     username: "Sophia Miller",
     count: 2,
-    datesTimes: [
-      { date: "2023-08-16", start: "10:00 AM", end: "01:00 PM" },
-      { date: "2023-08-17", start: "02:00 PM", end: "05:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-08-16", start: "10:00 AM", end: "01:00 PM" }],
     reason: "Sales training on effective negotiation techniques.",
   },
   {
@@ -215,10 +181,7 @@ export const bookingsData = [
     resource_name: "Computer Lab",
     username: "Michael Brown",
     count: 4,
-    datesTimes: [
-      { date: "2023-08-19", start: "10:00 AM", end: "12:00 PM" },
-      { date: "2023-08-20", start: "02:00 PM", end: "04:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-08-19", start: "10:00 AM", end: "12:00 PM" }],
     reason: "Training session on effective presentation skills.",
   },
   {
@@ -227,10 +190,7 @@ export const bookingsData = [
     resource_name: "Conference Room C",
     username: "Sophia Miller",
     count: 6,
-    datesTimes: [
-      { date: "2023-08-21", start: "09:00 AM", end: "12:00 PM" },
-      { date: "2023-08-22", start: "01:00 PM", end: "04:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-08-21", start: "09:00 AM", end: "12:00 PM" }],
     reason: "Team building activity to foster collaboration.",
   },
   {
@@ -257,10 +217,7 @@ export const bookingsData = [
     resource_name: "Conference Room C",
     username: "Harper Lee",
     count: 2,
-    datesTimes: [
-      { date: "2023-08-25", start: "10:00 AM", end: "01:00 PM" },
-      { date: "2023-08-26", start: "02:00 PM", end: "05:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-08-25", start: "10:00 AM", end: "01:00 PM" }],
     reason: "Departmental meeting to align on quarterly goals.",
   },
   {
@@ -278,10 +235,7 @@ export const bookingsData = [
     resource_name: "Auditorium A",
     username: "Ryan Anderson",
     count: 4,
-    datesTimes: [
-      { date: "2023-08-28", start: "10:00 AM", end: "12:00 PM" },
-      { date: "2023-08-29", start: "02:00 PM", end: "04:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-08-28", start: "10:00 AM", end: "12:00 PM" }],
     reason: "Workshop on effective team communication.",
   },
   {
@@ -290,10 +244,7 @@ export const bookingsData = [
     resource_name: "Conference Room C",
     username: "Andrew Adams",
     count: 6,
-    datesTimes: [
-      { date: "2023-08-30", start: "09:00 AM", end: "12:00 PM" },
-      { date: "2023-08-31", start: "01:00 PM", end: "04:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-08-30", start: "09:00 AM", end: "12:00 PM" }],
     reason: "Training session on problem-solving techniques.",
   },
   {
@@ -320,10 +271,7 @@ export const bookingsData = [
     resource_name: "Lab E",
     username: "Lily Adams",
     count: 2,
-    datesTimes: [
-      { date: "2023-09-03", start: "10:00 AM", end: "01:00 PM" },
-      { date: "2023-09-04", start: "02:00 PM", end: "05:00 PM" },
-    ],
+    datesTimes: [{ date: "2023-09-03", start: "10:00 AM", end: "01:00 PM" }],
     reason: "Departmental meeting to discuss budget allocation.",
   },
 ];
