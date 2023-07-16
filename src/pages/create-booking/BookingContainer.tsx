@@ -113,7 +113,7 @@ export default function BookingContainer() {
       formValues['startDateTime'] = formatDate(formValues.bookingStartTime);
       formValues['endDateTime'] = formatDate(formValues.bookingEndTime);
       formValues['count'] = formValues.occupants;
-      formValues['resourceId'] = (resources.find((item) => item.name === formValues.ResourceName)).id;
+      formValues['resourceId'] = String((resources.find((item) => item.name === formValues.ResourceName)).id);
       formValues['username'] = user.username;
       console.log(formValues);
       const response = await bookingService.bookResource(formValues);
