@@ -17,6 +17,8 @@ import BackgroundImage from "../../../public/assets/images/background.jpg";
 import Orders from "./Orders";
 import BookingTable from "./BookingsTable";
 import BookingAnalysis from "./BookingAnalysis";
+import resourcesService from "src/services/ResourcesServices";    
+
 
 
 const dashboardTheme = createTheme({
