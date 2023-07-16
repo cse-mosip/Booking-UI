@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from "react";
 import {Button, Grid, Container} from '@mui/material';
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux';
 import {removeResources, enqueueResources} from 'src/redux/resource/actions';
+import resourcesService from "src/services/ResourcesServices";
 
 
 const Dashboard = () => {
@@ -43,7 +44,16 @@ const Dashboard = () => {
         }
     ]
 
-    dispatch(enqueueResources(resources));
+    useEffect(() => {
+        SetResources();
+    }, [])
+
+    const SetResources = async () => {
+        const resourceData = await resourcesService.getResources();
+        if(resourceData?.status){
+            dispatch(enqueueResources(resourceData.data));
+        }
+    }
 
     return (
         <Container style={{height: '100vh', display: 'flex', alignItems: 'center'}}>
