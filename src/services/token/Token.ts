@@ -11,7 +11,7 @@ const getAccessToken = () => {
 
 const removeAccessToken = () => {
   console.log('removed access token');
-  localStorage.removeItem("AccessToken");
+  // localStorage.removeItem("AccessToken");
 }
 
 const getAuth = () => {

@@ -9,7 +9,6 @@ import {
   Paper,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-
 import Copyright from "src/components/Copyright";
 import AppbarComponent from "src/components/AppbarComponent";
 import DrawerComponent from "src/components/DrawerComponent";
@@ -17,7 +16,9 @@ import BackgroundImage from "../../../public/assets/images/background.jpg";
 import Orders from "./Orders";
 import BookingTable from "./BookingsTable";
 import BookingAnalysis from "./BookingAnalysis";
-
+import resourcesService from "src/services/ResourcesServices";    
+import {useDispatch} from 'react-redux';
+import {enqueueResources} from 'src/redux/resource/actions';
 
 const dashboardTheme = createTheme({
   palette: {
