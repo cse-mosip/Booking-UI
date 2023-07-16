@@ -10,7 +10,8 @@ const getAccessToken = () => {
 };
 
 const removeAccessToken = () => {
-  localStorage.removeItem("AccessToken");
+  console.log('removed access token');
+  // localStorage.removeItem("AccessToken");
 }
 
 const getAuth = () => {

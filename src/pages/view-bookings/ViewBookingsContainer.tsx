@@ -4,9 +4,7 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
 import { BookingCard } from "./BookingCard";
 import BookingServices from "src/services/BookingServices";
 import AppbarComponent from "src/components/AppbarComponent";
@@ -26,16 +24,11 @@ const dashboardTheme = createTheme({
 });
 
 export default function ViewBookingsContainer(): JSX.Element {
-  const navigate = useNavigate();
   const [bookingsData, setBookingsData] = useState([]);
   const [open, setOpen] = useState(false);
 
   const toggleDrawer = () => {
     setOpen(!open);
-  };
-
-  const handleHomeClick = (): void => {
-    navigate("/dashboard");
   };
 
   useEffect(() => {
@@ -58,7 +51,7 @@ export default function ViewBookingsContainer(): JSX.Element {
         <AppbarComponent open={open} toggleDrawer={toggleDrawer} />
         <DrawerComponent open={open} toggleDrawer={toggleDrawer} />
 
-        <Container component="main" maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+        <Container component="main" maxWidth="md">
           <Toolbar />
           <Paper
             variant="outlined"
@@ -83,30 +76,8 @@ export default function ViewBookingsContainer(): JSX.Element {
               ))}
             </Box>
           </Paper>
-          <Box sx={{ mt: 2 }}>
-            <Button
-              variant="contained"
-              onClick={handleHomeClick}
-              sx={{
-                width: "100%",
-                backgroundColor: "#3F51B5",
-                color: "#FFFFFF",
-                transition: "background-color 0.3s ease-in-out",
-                "&:hover": {
-                  backgroundColor: "#303F9F",
-                },
-              }}
-            >
-              Go Back
-            </Button>
-          </Box>
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="body2" color="text.secondary" align="center">
-              © {new Date().getFullYear()} MOSIP
-            </Typography>
-          </Box>
+          <Copyright />
         </Container>
-        <Copyright />
       </Box>
     </ThemeProvider>
   );

@@ -187,7 +187,7 @@ export default function AddNewResourceContainer() {
                 >
                   <Button
                     component={RouterLink}
-                    to="/"
+                    to="/dashboard"
                     variant="contained"
                     color="primary"
                   >
