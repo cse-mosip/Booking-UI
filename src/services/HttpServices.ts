@@ -1,17 +1,20 @@
 import Axios from "axios";
 import Token from "src/services/token/Token";
 import ToasterMessage from "src/helpers/ToasterMessage";
-import { useNavigate } from "react-router-dom"
+import authServices from 'src/services/AuthServices';
 // --When using refresh token 
 // import jwtDecode from "jwt-decode";
 // import dayJS from "dayjs";
 
+const handleLogOut = async (token: string) => {
+    await authServices.logout(token);
+};
+
 export const baseURL = import.meta.env.REACT_APP_BACKEND_URL;
-Axios.defaults.withCredentials = true;
+Axios.defaults.withCredentials = false;
 let bearer_token = Token.getAccessToken();
-console.log('bearer_token: ',bearer_token)
 const axiosInstance = Axios.create({
-    withCredentials: true,
+    withCredentials: false,
     baseURL: baseURL,
     headers: { Authorization: `Bearer ${bearer_token}` }
 })
@@ -19,15 +22,13 @@ const axiosInstance = Axios.create({
 axiosInstance.interceptors.response.use((response) => {
     return response;
 }, (error) => {
-    if ([401, 403].includes(error?.response?.status) || Token.getAuth() === null) {
+    if ([401, 403].includes(error?.response?.status)) {
         ToasterMessage.errorMessage({
             error: error,
             custom_message: "Your session has expired. Please login again."
         })
         Token.removeAccessToken();
-        const navigate = useNavigate()
-        navigate(`/logout`)
-        return window.location.href = '/logout';
+        handleLogOut(bearer_token);
     }else{
         ToasterMessage.errorMessage({
             error: error,
