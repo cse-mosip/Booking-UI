@@ -5,8 +5,6 @@ export type Resource = {
 }
 
 export type Booking = {
-    bookingTitle: string;
-    category: Resource;
     ResourceName: string;
     reason?: string;
     bookingDate: any;
@@ -15,3 +13,20 @@ export type Booking = {
     occupants: number;
 }
 
+export type User = {
+    username: string;
+}
+
+export type BookingForm = {
+    username?: string,
+    resourceId?: number,
+    reason?: string,
+    count?: number,
+    startDateTime?: string,
+    endDateTime?: string,
+    ResourceName?: string,
+    bookingDate?: any,
+    bookingEndTime?: any,
+    bookingStartTime?: any,
+    occupants?: string,
+}

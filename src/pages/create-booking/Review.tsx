@@ -25,24 +25,11 @@ export default function Review(props :ReviewProps) {
       <Typography variant="h6" gutterBottom>
         Booking summary
       </Typography>
-      <Typography gutterBottom>Booking Title: {props.BookingForm.bookingTitle}</Typography>
       <Typography gutterBottom>Resource Selected: {props.BookingForm.ResourceName}</Typography>
       <Typography gutterBottom>Date: {bookingDate}</Typography>
       <Typography gutterBottom>Booking start time: {bookingStartTime}</Typography>
       <Typography gutterBottom>Booking end time: {bookingEndTime}</Typography>
       <Typography gutterBottom>Reason: {props.BookingForm.reason}</Typography>
-      <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-        User Info
-      </Typography>
-      <Typography gutterBottom>Name: Nethum Lamahewage</Typography>
-      <Typography gutterBottom>Index: 190123A</Typography>
-      <Typography gutterBottom>
-        Department of Computer Science and Engineering, Faculty of Engineering
-      </Typography>
-      <Typography gutterBottom>Mobile Number: 0712203412</Typography>
-      <Typography gutterBottom>
-        Address: 324/B, Amal road, Baracuda, Gallface
-      </Typography>
 
       <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
         Terms and Conditions

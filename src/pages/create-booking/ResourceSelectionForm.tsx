@@ -20,6 +20,7 @@ import Alert from '@mui/material/Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { Resource } from 'src/types';
 import { AppState } from 'src/redux/reducer';
+import {formatDate, getTimeSlots} from "src/helpers/utils"
 
 type ResourceSelectionFormProps = {
     formik: any;
@@ -28,11 +29,45 @@ interface Option {
     id: number;
     value: string;
     label: string;
-  }
+}
+
+// const bookedSlots = [
+//     {
+//       "id": 12,
+//       "resourceId": 14,
+//       "username": 168,
+//       "reason": "HCI Lecture",
+//       "count": 40,
+//       "startDateTime": "2023-07-11T09:00:00",
+//       "endDateTime": "2023-07-11T10:30:00",
+//       "status": "APPROVED"
+//     },
+//     {
+//       "id": 12,
+//       "resourceId": 14,
+//       "username": 168,
+//       "reason": "HCI Lecture",
+//       "count": 40,
+//       "startDateTime": "2023-07-11T12:00:00",
+//       "endDateTime": "2023-07-11T13:40:00",
+//       "status": "APPROVED"
+//     },
+//     {
+//       "id": 12,
+//       "resourceId": 14,
+//       "username": 168,
+//       "reason": "HCI Lecture",
+//       "count": 40,
+//       "startDateTime": "2023-07-11T18:27:00",
+//       "endDateTime": "2023-07-11T19:56:34",
+//       "status": "APPROVED"
+//     }
+//   ];
 
 export default function ResourceSelectionForm(props :ResourceSelectionFormProps) {
     const [loader, setLoader] = useState(false);
     const [flagForBookingDate, setFlagForBookingDate] = useState(false);
+    const [errorInBookedSlots, setErrorInBookedSlots] = useState(null);
     const [bookingEndTimeError, setBookingEndTimeError] = useState(null);
     const [timeSlots, setTimeSlots] = useState([]);
     const resources: Resource[] | null = useSelector((state: AppState) => state.resources.resources);
@@ -44,14 +79,20 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
     const formattedDate = `${year}-${month}-${day}`;
 
     const options: Option[] = [];
-    resources.forEach((resource) => {
-      const option: Option = {
-        id: parseInt(resource.id),
-        value: resource.name,
-        label: resource.name,
-      };
-      options.push(option);
-    });
+    if(resources){
+        resources.forEach((resource) => {
+            const option: Option = {
+              id: parseInt(resource.id),
+              value: resource.name,
+              label: resource.name,
+            };
+            options.push(option);
+        });
+        console.log('options: ',options);
+    }
+
+    console.log('adoo');
+    
 
     const handleBookingStartTime = (time :any) => {
         props.formik.values.bookingStartTime = time;
@@ -69,16 +110,30 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
     };
 
     const checkAvailability = async (date: any) => {
-        props.formik.values.bookingDate = date;
         setFlagForBookingDate(true);
         setLoader(true);
-        const response = await bookingService.getBookedTimeSlots(props.formik.values);
-        setTimeout(() => {
-          setLoader(false);
-        }, 200);
-        if(response){
-            setTimeSlots(response)
+        if(props.formik.values.ResourceName && date){
+            props.formik.values.bookingDate = date;
+            const resourceId = (resources.find((item) => item.name === props.formik.values.ResourceName)).id;
+            const dateString = formatDate(date)
+            setErrorInBookedSlots(null);
+            const response = await bookingService.getBookedTimeSlots(resourceId, dateString);
+            setTimeout(() => {
+              setLoader(false);
+            }, 1000);
+            if(response.status === 'OK'){
+                setErrorInBookedSlots(null);
+                setTimeSlots(getTimeSlots(response.data))
+            }else{
+                setErrorInBookedSlots('Could not get time slots!');
+            }
+        }else{
+            setErrorInBookedSlots('You have to select a resource before booking a date')
+            setTimeout(() => {
+                setLoader(false);
+              }, 1000);
         }
+
     }
     
 
@@ -89,41 +144,6 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
             </Typography>
 
             <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        id="bookingTitle"
-                        name="bookingTitle"
-                        label="Booking Title"
-                        fullWidth
-                        autoComplete="booking-title"
-                        variant="standard"
-                        value={props.formik.values.bookingTitle}
-                        onChange={props.formik.handleChange}
-                        error={props.formik.touched.bookingTitle && Boolean(props.formik.errors.bookingTitle)}
-                        helperText={props.formik.touched.bookingTitle && props.formik.errors.bookingTitle}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        id="category"
-                        name="category"
-                        label="Category"
-                        fullWidth
-                        autoComplete="Random"
-                        variant="standard"
-                        select
-                        value={props.formik.values.category}
-                        onChange={props.formik.handleChange}
-                        error={props.formik.touched.category && Boolean(props.formik.errors.category)}
-                        helperText={props.formik.touched.category && props.formik.errors.category}
-                    >
-                        {options.map(option => (
-                            <MenuItem key={option.id} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                </Grid>
                 <Grid item xs={12}>
                     <TextField
                         id="ResourceName"
@@ -182,18 +202,30 @@ export default function ResourceSelectionForm(props :ResourceSelectionFormProps)
                 </Grid>
                 {flagForBookingDate ? 
                     <Grid item xs={12} sm={12}>
-                        <Typography variant="h6" gutterBottom>
-                            Booked slots for your selected date:
-                        </Typography>
+                        {timeSlots.length > 0 || errorInBookedSlots?
+                            <Typography variant="h6" gutterBottom>
+                                Booked slots for your selected date:
+                            </Typography>
+                            :
+                            null
+                        }
+
                         <Stack direction="column" spacing={1}>
+
                             {
                             loader ?
                             <CircularProgress color="inherit" size={30} /> 
                             : 
-                            timeSlots.map((slot)=>(
-                                <Chip label={slot} />
+                            timeSlots.map((slot,index)=>(
+                                <Chip key={index} label={slot} />
                             )) 
                             }
+
+                            {errorInBookedSlots ? 
+                            <Alert severity="error">{errorInBookedSlots}</Alert>
+                            : null
+                            }
+
                         </Stack>
                     </Grid>
                     : null

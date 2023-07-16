@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from "react";
 import CssBaseline from "@mui/material/CssBaseline";
-import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Toolbar from "@mui/material/Toolbar";
 import Paper from "@mui/material/Paper";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
@@ -13,13 +11,27 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import {Avatar, IconButton, TextField} from "@mui/material";
+import { IconButton, TextField, Box} from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import AppbarComponent from "src/components/AppbarComponent";
+import DrawerComponent from "src/components/DrawerComponent";
+import Copyright from "src/components/Copyright";
+
+const dashboardTheme = createTheme({
+  palette: {
+    primary: {
+      main: "#3f51b5",
+    },
+    secondary: {
+      main: "#f50057",
+    },
+  },
+});
 import resourcesServices from "src/services/ResourcesServices";
 import {Resource} from "../../types";
 import {number} from "yup";
 
-function FutureBookingsTable({ bookings } :any) {
+function FutureBookingsTable({ bookings }: any) {
   return (
     <table style={{ width: "100%" }}>
       <thead>
@@ -32,7 +44,7 @@ function FutureBookingsTable({ bookings } :any) {
         </tr>
       </thead>
       <tbody>
-        {bookings.map((booking :any) => (
+        {bookings.map((booking: any) => (
           <tr key={booking.id}>
             <td style={{ textAlign: "left" }}>{booking.booker}</td>
             <td style={{ textAlign: "center" }}>{booking.users}</td>
@@ -201,6 +213,11 @@ function ResourceCard({ resource } : { resource:Resource }) {
 const defaultTheme = createTheme();
 
 export default function ViewResourcesContainer() {
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [resourceData, setResourceData] = useState<Resource[]>([]);
@@ -219,33 +236,16 @@ export default function ViewResourcesContainer() {
     },[]
   )
   const handleHomeClick = () => {
-    navigate("/");
+    navigate("/dashboard");
   };
 
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <CssBaseline />
-      <AppBar
-        position="absolute"
-        color="default"
-        elevation={0}
-        sx={{
-          position: "relative",
-          borderBottom: (t) => `1px solid ${t.palette.divider}`,
-        }}
-      >
-        <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
-          <Button color="inherit" onClick={handleHomeClick}>
-            Booking System
-          </Button>
-          <a href="#">
-            <IconButton edge="end" color="inherit" aria-label="User Profile">
-              <Avatar alt="User Image" src="/assets/images/21104.png" />
-            </IconButton>
-          </a>
-        </Toolbar>
-      </AppBar>
+    <ThemeProvider theme={dashboardTheme}>
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppbarComponent open={open} toggleDrawer={toggleDrawer} />
+        <DrawerComponent open={open} toggleDrawer={toggleDrawer} />
 
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Paper

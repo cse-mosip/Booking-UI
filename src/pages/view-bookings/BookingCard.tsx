@@ -19,6 +19,9 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 
+import BookingServices from 'src/services/BookingServices';
+
+
 interface Booking {
   booking_id: string;
   booked_resource_id: string;
@@ -54,12 +57,12 @@ export const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   };
 
   const handleAccept = () => {
-    // Handle accept action for the booking
+    BookingServices.updateBookingStatus(booking.booking_id, "APPROVED");
     console.log(`Accept booking: ${booking.booking_id}`);
   };
 
   const handleReject = () => {
-    // Handle reject action for the booking
+    BookingServices.updateBookingStatus(booking.booking_id, "APPROVED");
     console.log(`Reject booking: ${booking.booking_id}`);
   };
 
