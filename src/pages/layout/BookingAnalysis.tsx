@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardHeader from "@mui/material/CardHeader";
-import Box from "@mui/material/Box";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import PersonIcon from "@mui/icons-material/Person";
-import BusinessIcon from "@mui/icons-material/Business";
+import { useEffect, useState } from 'react';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import Box from '@mui/material/Box';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PersonIcon from '@mui/icons-material/Person';
+import BusinessIcon from '@mui/icons-material/Business';
 import {
   BarChart,
   Bar,
@@ -18,9 +18,12 @@ import {
   PieChart,
   Pie,
   Cell,
-} from "recharts";
+} from 'recharts';
 
-import BookingServices from "src/services/BookingServices";
+import BookingServices from 'src/services/BookingServices';
+import { Resource } from 'src/types';
+import { useSelector } from 'react-redux';
+import { AppState } from 'src/redux/reducer';
 
 interface Booking {
   id: number;
@@ -36,6 +39,9 @@ interface Booking {
 
 const BookingAnalysis: React.FC = () => {
   const [bookingsData, setBookingsData] = useState<Booking[]>([]);
+  const resources: Resource[] | null = useSelector(
+    (state: AppState) => state.resources.resources
+  );
 
   useEffect(() => {
     const fetchBookingsData = async () => {
@@ -50,8 +56,9 @@ const BookingAnalysis: React.FC = () => {
     fetchBookingsData();
   }, []);
 
-  const getBookingsCount = (): number => {
-    return bookingsData.length;
+  const getPendingBookingsCount = (): number => {
+    return bookingsData.filter((booking) => booking.status === 'PENDING')
+      .length;
   };
 
   const getMostAskedDatetimes = (): { datetime: string; count: number }[] => {
@@ -105,6 +112,7 @@ const BookingAnalysis: React.FC = () => {
     return sortedResources.slice(0, 3).map(([resource, count]) => ({
       resource,
       count,
+      name: resources.find((r) => r.id == resource).name,
     }));
   };
 
@@ -189,7 +197,7 @@ const BookingAnalysis: React.FC = () => {
       .map(([reason, count]) => ({ reason, count }));
   };
 
-  const bookingsCount = getBookingsCount();
+  const bookingsCount = getPendingBookingsCount();
   const mostAskedDatetimes = getMostAskedDatetimes();
   const mostActiveUsers = getMostActiveUsers();
   const mostUsedResources = getMostUsedResources();
@@ -216,11 +224,11 @@ const BookingAnalysis: React.FC = () => {
   };
 
   return (
-    <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h5" component="h2" gutterBottom>
         Bookings Analysis
       </Typography>
-      <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+      <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
         <Card sx={{ flex: 1, minWidth: 300, margin: 1 }}>
           <CardHeader
             avatar={<AccessTimeIcon />}
@@ -268,7 +276,7 @@ const BookingAnalysis: React.FC = () => {
           <CardContent>
             <BarChart width={300} height={200} data={mostUsedResources}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="resource" />
+              <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
               <Bar
