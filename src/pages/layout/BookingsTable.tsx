@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import BookingServices from "src/services/BookingServices";
 import Title from "./Title";
 
-
 interface Booking {
   id: number;
   resource: number;
@@ -45,11 +44,6 @@ export default function BookingTable() {
 
     fetchBookingsData();
   }, []);
-  const navigate = useNavigate();
-
-  const handleViewBookings = () => {
-    navigate("/bookings");
-  };
 
   return (
     <React.Fragment>
@@ -78,9 +72,11 @@ export default function BookingTable() {
           ))}
         </TableBody>
       </Table>
-      <Link color="primary" onClick={handleViewBookings} sx={{ mt: 3 }}>
-        See all
-      </Link>
+      <Grid item xs={3} sx={{ mt: 3 }}>
+        <Link color="primary" component={RouterLink} to={'/bookings'}>
+          See all
+        </Link>
+      </Grid>
     </React.Fragment>
   );
 }
