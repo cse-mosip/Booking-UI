@@ -1,34 +1,33 @@
-import React, { useState } from "react";
-import CssBaseline from "@mui/material/CssBaseline";
+import { Toolbar } from "@mui/material";
 import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import Grid from "@mui/material/Grid";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import Checkbox from "@mui/material/Checkbox";
+import CircularProgress from "@mui/material/CircularProgress";
+import Container from "@mui/material/Container";
+import CssBaseline from "@mui/material/CssBaseline";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
+import dayjs from "dayjs";
+import { useFormik } from "formik";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { Link as RouterLink } from "react-router-dom";
+import AppbarComponent from "src/components/AppbarComponent";
+import Copyright from "src/components/Copyright";
+import DrawerComponent from "src/components/DrawerComponent";
+import { formatDate } from "src/helpers/utils";
+import { AppState } from "src/redux/reducer";
+import bookingService from "src/services/BookingServices";
+import { Resource, User } from "src/types";
+import * as yup from "yup";
 import ResourceSelectionForm from "./ResourceSelectionForm";
 import Review from "./Review";
-import { useNavigate } from "react-router-dom";
-import { Link as RouterLink } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { Resource, User } from "src/types";
-import { AppState } from "src/redux/reducer";
-import * as yup from "yup";
-import { useFormik } from "formik";
-import dayjs from "dayjs";
-import bookingService from "src/services/BookingServices";
-import CircularProgress from "@mui/material/CircularProgress";
-import { formatDate } from "src/helpers/utils";
-import AppbarComponent from "src/components/AppbarComponent";
-import DrawerComponent from "src/components/DrawerComponent";
-import Copyright from "src/components/Copyright";
-import { Toolbar } from "@mui/material";
 
 const steps = ["Select Resource", "Review your booking"];
 
@@ -125,8 +124,6 @@ export default function BookingContainer() {
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
-
-  const navigate = useNavigate();
 
   const handleTermsCheckboxChange = (event: any) => {
     setTermsAccepted(event.target.checked);
