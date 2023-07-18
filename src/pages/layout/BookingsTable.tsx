@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
 import Link from "@mui/material/Link";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import Title from "./Title";
 import BookingServices from "src/services/BookingServices";
+import Title from "./Title";
 
-import { bookingsData } from "../view-bookings/examples";
 
 interface Booking {
   id: number;
@@ -30,8 +29,15 @@ export default function BookingTable() {
   useEffect(() => {
     const fetchBookingsData = async () => {
       try {
-        const data = await BookingServices.getBookings();
-        setBookingsData(data);
+        const data: Booking[] = await BookingServices.getBookings();
+        setBookingsData(
+          data.map((b) => {
+            return {
+              ...b,
+              bookedDate: new Date(b.bookedDate).toLocaleDateString(),
+            };
+          })
+        );
       } catch (error) {
         console.log(error);
       }
