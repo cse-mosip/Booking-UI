@@ -162,7 +162,7 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
             Reason: {booking.reason}
           </Typography>
           <Typography variant="body2" color="textSecondary" fontWeight="bold">
-            Requested Resouce Count: {booking.count}
+            Requested Resource Count: {booking.count}
           </Typography>
           <Typography variant="body2" color="textSecondary" fontWeight="bold">
             Maximum Count of the Resource: {resource.count}
@@ -185,9 +185,9 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell>{booking.bookedDate}</TableCell>
-                  <TableCell>{booking.startTime}</TableCell>
-                  <TableCell>{booking.endTime}</TableCell>
+                  <TableCell>{(new Date(booking.bookedDate)).toLocaleDateString()}</TableCell>
+                  <TableCell>{(new Date(booking.startTime)).toLocaleString()}</TableCell>
+                  <TableCell>{(new Date(booking.endTime)).toLocaleString()}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
