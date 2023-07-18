@@ -1,24 +1,23 @@
-import React, { useState } from "react";
-import CssBaseline from "@mui/material/CssBaseline";
+import { Toolbar } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
+import CssBaseline from "@mui/material/CssBaseline";
 import Paper from "@mui/material/Paper";
-import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import Stepper from "@mui/material/Stepper";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
+import React, { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import AppbarComponent from "src/components/AppbarComponent";
+import Copyright from "src/components/Copyright";
+import DrawerComponent from "src/components/DrawerComponent";
+import ResourceServices from "src/services/ResourcesServices";
+import * as yup from "yup";
 import ResourceSelectionForm from "./ResourceSelectionForm";
 import Review from "./Review";
-import { useNavigate } from "react-router-dom";
-import { Link as RouterLink } from "react-router-dom";
-import * as yup from "yup";
-import ResourceServices from "src/services/ResourcesServices";
-import AppbarComponent from "src/components/AppbarComponent";
-import DrawerComponent from "src/components/DrawerComponent";
-import Copyright from "src/components/Copyright";
-import { Toolbar } from "@mui/material";
 
 const dashboardTheme = createTheme({
   palette: {

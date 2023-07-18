@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import Link from "@mui/material/Link";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import { useNavigate } from "react-router-dom";
+import Link from '@mui/material/Link';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import React, { useEffect, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
-import Title from "./Title";
-import BookingServices from "src/services/BookingServices";
+import BookingServices from 'src/services/BookingServices';
+import Title from './Title';
 
-import { bookingsData } from "../view-bookings/examples";
+import { Grid } from '@mui/material';
 
 interface Booking {
   id: number;
@@ -39,11 +39,6 @@ export default function BookingTable() {
 
     fetchBookingsData();
   }, []);
-  const navigate = useNavigate();
-
-  const handleViewBookings = () => {
-    navigate("/bookings");
-  };
 
   return (
     <React.Fragment>
@@ -72,9 +67,11 @@ export default function BookingTable() {
           ))}
         </TableBody>
       </Table>
-      <Link color="primary" onClick={handleViewBookings} sx={{ mt: 3 }}>
-        See all
-      </Link>
+      <Grid item xs={3} sx={{ mt: 3 }}>
+        <Link color="primary" component={RouterLink} to={'/bookings'}>
+          See all
+        </Link>
+      </Grid>
     </React.Fragment>
   );
 }

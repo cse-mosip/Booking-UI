@@ -1,23 +1,23 @@
-import React, {useEffect, useState} from "react";
-import CssBaseline from "@mui/material/CssBaseline";
-import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Collapse from "@mui/material/Collapse";
+import { Box, IconButton, TextField } from "@mui/material";
+import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
+import CircularProgress from '@mui/material/CircularProgress';
+import Collapse from "@mui/material/Collapse";
+import Container from "@mui/material/Container";
+import CssBaseline from "@mui/material/CssBaseline";
+import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { IconButton, TextField, Box} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import AppbarComponent from "src/components/AppbarComponent";
 import DrawerComponent from "src/components/DrawerComponent";
 import resourcesServices from "src/services/ResourcesServices";
-import {Booking, Resource} from "../../types";
-import dayjs from "dayjs";
-import CircularProgress from '@mui/material/CircularProgress';
+import { Booking, Resource } from "../../types";
 
 const dashboardTheme = createTheme({
   palette: {
@@ -225,7 +225,6 @@ export default function ViewResourcesContainer() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [resourceData, setResourceData] = useState<Resource[]>([]);
@@ -275,10 +274,6 @@ export default function ViewResourcesContainer() {
 
     },[]
   )
-  const handleHomeClick = () => {
-    navigate("/dashboard");
-  };
-
 
   return (
     <ThemeProvider theme={dashboardTheme}>
@@ -317,13 +312,14 @@ export default function ViewResourcesContainer() {
           }
         </Paper>
         <Box sx={{ mt: 2 }}>
-          <Button
-            variant="contained"
-            onClick={handleHomeClick}
-            sx={{ width: "100%" }}
-          >
-            Go Back
-          </Button>
+          <RouterLink to={"/dashboard"} style={{textDecoration: 'none', color: 'inherit'}}>
+            <Button
+              variant="contained"
+              sx={{ width: "100%" }}
+            >
+              Go Back
+            </Button>
+          </RouterLink>
         </Box>
         <Box sx={{ mt: 4 }}>
           <Typography variant="body2" color="text.secondary" align="center">
