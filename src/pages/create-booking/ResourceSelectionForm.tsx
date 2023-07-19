@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 import { formatDate, getTimeSlots } from 'src/helpers/utils';
 import { AppState } from 'src/redux/reducer';
 import bookingService from 'src/services/BookingServices';
-import { Resource } from 'src/types';
+import { Resource, User } from 'src/types';
 
 type ResourceSelectionFormProps = {
   formik: any;
@@ -71,6 +71,7 @@ export default function ResourceSelectionForm(
   const resources: Resource[] | null = useSelector(
     (state: AppState) => state.resources.resources
   );
+  const user: User | null = useSelector((state: AppState) => state.user.user);
 
   const today = new Date();
   const year = today.getFullYear();
@@ -115,9 +116,11 @@ export default function ResourceSelectionForm(
       ).id;
       const dateString = formatDate(date);
       setErrorInBookedSlots(null);
+      const token = user.token;
       const response = await bookingService.getBookedTimeSlots(
         resourceId,
-        dateString
+        dateString,
+        token,
       );
       setTimeout(() => {
         setLoader(false);

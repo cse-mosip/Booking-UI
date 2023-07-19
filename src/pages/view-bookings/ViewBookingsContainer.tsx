@@ -13,7 +13,7 @@ import Copyright from "src/components/Copyright";
 import { Toolbar } from "@mui/material";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from 'src/redux/reducer';
-import { Resource } from 'src/types';
+import { Resource, User } from 'src/types';
 
 const dashboardTheme = createTheme({
   palette: {
@@ -28,6 +28,7 @@ const dashboardTheme = createTheme({
 
 export default function ViewBookingsContainer(): JSX.Element {
   const resources: Resource[] | null = useSelector((state: AppState) => state.resources.resources);
+  const user: User | null = useSelector((state: AppState) => state.user.user);
   const [bookingsData, setBookingsData] = useState([]);
   const [open, setOpen] = useState(false);
 
@@ -38,7 +39,8 @@ export default function ViewBookingsContainer(): JSX.Element {
   useEffect(() => {
     const fetchBookingsData = async () => {
       try {
-        const data = await BookingServices.getBookings();
+        const token = user.token;
+        const data = await BookingServices.getBookings(token);
         setBookingsData(data);
       } catch (error) {
         console.log(error);

@@ -7,18 +7,21 @@ import TableRow from '@mui/material/TableRow';
 import { Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-
 import BookingServices from 'src/services/BookingServices';
 import Title from './Title';
-import { Booking } from 'src/types';
+import { Booking, User } from 'src/types';
+import { useSelector } from 'react-redux';
+import { AppState } from 'src/redux/reducer';
 
 export default function BookingTable() {
   const [bookingsData, setBookingsData] = useState<Booking[]>([]);
+  const user: User | null = useSelector((state: AppState) => state.user.user);
 
   useEffect(() => {
     const fetchBookingsData = async () => {
       try {
-        const data = await BookingServices.getBookings();
+        const token = user.token;
+        const data = await BookingServices.getBookings(token);
         setBookingsData(data);
       } catch (error) {
         console.log(error);

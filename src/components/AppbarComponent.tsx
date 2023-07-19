@@ -4,8 +4,13 @@ import { Avatar, IconButton, Toolbar, Typography } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { styled } from '@mui/material/styles';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-
 import UniversityLogo from '../../public/assets/images/University_of_Moratuwa_logo.png';
+import {useDispatch} from 'react-redux';
+import {enqueueUser, removeUser} from 'src/redux/user/actions';
+import authServices from 'src/services/AuthServices';
+import { User } from 'src/types';
+import { AppState } from 'src/redux/reducer';
+import { useSelector } from 'react-redux';
 
 const drawerWidth: number = 240;
 
@@ -32,15 +37,16 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 export default function AppbarComponent({ open, toggleDrawer }) {
-  const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+  const user: User | null = useSelector(
+    (state: AppState) => state.user.user
+  );
+  const token = user.token;
+  
   const handleLogout = async () => {
-    try {
-      // Perform logout logic here
-      navigate('/');
-    } catch (error) {
-      console.error('Error occurred during logout:', error);
-    }
+    await authServices.logout(token);
+    dispatch(removeUser());
   };
 
   return (

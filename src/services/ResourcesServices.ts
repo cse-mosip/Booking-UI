@@ -1,8 +1,11 @@
 import ToasterMessage from "src/helpers/ToasterMessage";
 import axios from "src/services/HttpServices";
 
-const getResources = async () => {
+const getResources = async (token :string) => {
   try {
+    console.log('before get resource: ',`Bearer ${token}`);
+    
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.get("/resources");
     if (response.status === 200) {
       return response.data;
