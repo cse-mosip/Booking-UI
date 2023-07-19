@@ -58,6 +58,10 @@ export default function AddNewResourceContainer() {
   const [resourceCountError, setResourceCountError] = useState("");
   const [open, setOpen] = useState(false);
 
+  const user: User | null = useSelector(
+    (state: AppState) => state.user.user
+  );
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -127,9 +131,6 @@ export default function AddNewResourceContainer() {
         }
         break;
       case 1:
-        const user: User | null = useSelector(
-          (state: AppState) => state.user.user
-        );
         const response = await ResourceServices.createResource(
           resourceName,
           resourceCount,
