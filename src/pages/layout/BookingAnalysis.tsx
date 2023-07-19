@@ -61,20 +61,22 @@ const BookingAnalysis: React.FC = () => {
       .length;
   };
 
-  const getMostAskedDatetimes = (): { datetime: string; count: number }[] => {
-    const datetimeCounts: { [key: string]: number } = {};
+  const getMostAskedTimes = (): { datetime: string; count: number }[] => {
+    const timeSlotCounts: { [key: string]: number } = {};
     bookingsData.forEach((booking: Booking) => {
-      const datetimeString = `${booking.bookedDate} ${booking.startTime}-${booking.endTime}`;
-      if (datetimeCounts[datetimeString]) {
-        datetimeCounts[datetimeString]++;
+      const startTime = (new Date(booking.startTime)).toLocaleTimeString();
+      const endTime = (new Date(booking.endTime)).toLocaleTimeString();
+      const timeSlotString = `${startTime}-${endTime}`;
+      if (timeSlotCounts[timeSlotString]) {
+        timeSlotCounts[timeSlotString]++;
       } else {
-        datetimeCounts[datetimeString] = 1;
+        timeSlotCounts[timeSlotString] = 1;
       }
     });
-    const sortedDatetimes = Object.entries(datetimeCounts).sort(
+    const sortedTimeSlots = Object.entries(timeSlotCounts).sort(
       (a: [string, number], b: [string, number]) => b[1] - a[1]
     );
-    return sortedDatetimes.slice(0, 3).map(([datetime, count]) => ({
+    return sortedTimeSlots.slice(0, 3).map(([datetime, count]) => ({
       datetime,
       count,
     }));
@@ -198,7 +200,7 @@ const BookingAnalysis: React.FC = () => {
   };
 
   const bookingsCount = getPendingBookingsCount();
-  const mostAskedDatetimes = getMostAskedDatetimes();
+  const mostAskedTimes = getMostAskedTimes();
   const mostActiveUsers = getMostActiveUsers();
   const mostUsedResources = getMostUsedResources();
   const averageBookingDuration = getAverageBookingDuration();
@@ -232,10 +234,10 @@ const BookingAnalysis: React.FC = () => {
         <Card sx={{ flex: 1, minWidth: 300, margin: 1 }}>
           <CardHeader
             avatar={<AccessTimeIcon />}
-            title="Most Asked Datetimes"
+            title="Most Asked Times"
           />
           <CardContent>
-            <BarChart width={300} height={200} data={mostAskedDatetimes}>
+            <BarChart width={300} height={200} data={mostAskedTimes}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="datetime" />
               <YAxis />
