@@ -4,25 +4,13 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import BookingServices from 'src/services/BookingServices';
 import Title from './Title';
-
-import { Grid } from '@mui/material';
-
-interface Booking {
-  id: number;
-  resource: number;
-  userId: string;
-  bookedDate: string;
-  startTime: string;
-  endTime: string;
-  count: number;
-  reason: string;
-  status: string;
-}
+import { Booking } from 'src/types';
 
 export default function BookingTable() {
   const [bookingsData, setBookingsData] = useState<Booking[]>([]);

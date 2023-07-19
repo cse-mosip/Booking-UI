@@ -62,7 +62,6 @@ export default function ViewBookingsContainer(): JSX.Element {
             sx={{
               my: { xs: 3, md: 6 },
               p: { xs: 2, md: 10 },
-              backgroundColor: "#F5F7FA",
               boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
             }}
           >
