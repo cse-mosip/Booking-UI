@@ -17,6 +17,8 @@ export type Booking = {
 
 export type User = {
     username: string;
+    role: string;
+    token: string;
 }
 
 export type BookingForm = {
@@ -32,3 +34,7 @@ export type BookingForm = {
     bookingStartTime?: any,
     occupants?: string,
 }
+
+export const ADMIN = 'ADMIN';
+export const RESOURCE_MANAGER = 'RESOURCE_MANAGER';
+export const RESOURCE_USER = 'RESOURCE_USER';

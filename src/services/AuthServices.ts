@@ -26,8 +26,12 @@ const login = async (username: string, password: string) => {
   try {
     const response = await axios.post("/auth/login", data);
     if(response.status === 200 || response.status === 202){
-      Token.setAccessToken(response.data.data.token);
-      return response.data
+      const token:string = response.data.data.token;
+      Token.setAccessToken(token);
+      const user:any = Token.getAuth();
+      const role: string = user.role
+      const res = {data:response.data, role:role, status:response.data.status, token:token}
+      return res
     }
   } catch (error) {
     ToasterMessage.errorMessage({
