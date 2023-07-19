@@ -18,6 +18,9 @@ import ResourceServices from "src/services/ResourcesServices";
 import * as yup from "yup";
 import ResourceSelectionForm from "./ResourceSelectionForm";
 import Review from "./Review";
+import { User } from "../../types";
+import { useSelector } from "react-redux";
+import { AppState } from "../../redux/reducer";
 
 const dashboardTheme = createTheme({
   palette: {
@@ -124,9 +127,13 @@ export default function AddNewResourceContainer() {
         }
         break;
       case 1:
+        const user: User | null = useSelector(
+          (state: AppState) => state.user.user
+        );
         const response = await ResourceServices.createResource(
           resourceName,
-          resourceCount
+          resourceCount,
+          user.token
         );
         if (response) {
           setActiveStep(activeStep + 1);
@@ -141,16 +148,15 @@ export default function AddNewResourceContainer() {
     setActiveStep(activeStep - 1);
   };
 
-
   return (
     <ThemeProvider theme={dashboardTheme}>
       <CssBaseline />
       <Box sx={{ display: "flex" }}>
         <AppbarComponent open={open} toggleDrawer={toggleDrawer} />
         <DrawerComponent open={open} toggleDrawer={toggleDrawer} />
-        
+
         <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
-        <Toolbar />
+          <Toolbar />
 
           <Paper
             variant="outlined"
