@@ -50,8 +50,9 @@ const bookResource = async (data :BookingForm, token: string) => {
   }
 };
 
-const findBookingById = async (bookingId: number) => {
+const findBookingById = async (bookingId: number, token: string) => {
   try {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.get(`/bookings/${bookingId}`);
     if (response.status === 200) {
       return(response.data);
@@ -85,8 +86,9 @@ const getBookedTimeSlots = async (resourceId: string, date: string, token :strin
   }
 };
 
-const deleteBooking = async (bookingId: number) => {
+const deleteBooking = async (bookingId: number, token: string) => {
   try {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.delete(`/bookings/${bookingId}`);
     if (response.status === 200) {
       return(response.data);
@@ -101,9 +103,10 @@ const deleteBooking = async (bookingId: number) => {
   }
 };
 
-const updateBookingStatus = async (bookingId: string, status: string) => {
+const updateBookingStatus = async (bookingId: string, status: string, token :string) => {
   const bookingStatus = { status: status };
   try {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.patch(
       `/bookings/${bookingId}/status`,
       bookingStatus

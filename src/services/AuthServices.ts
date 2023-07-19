@@ -12,8 +12,7 @@ const login = async (username: string, password: string) => {
     const response = await axios.post("/auth/login", data);
     if(response.status === 200 || response.status === 202){
       const token:string = response.data.data.token;
-      Token.setAccessToken(token);
-      const user:any = Token.getAuth();
+      const user:any = Token.getAuth(token);
       const role: string = user.role
       const res = {data:response.data, role:role, status:response.data.status, token:token}
       return res

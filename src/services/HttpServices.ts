@@ -4,11 +4,9 @@ import ToasterMessage from "src/helpers/ToasterMessage";
 
 export const baseURL = import.meta.env.REACT_APP_BACKEND_URL;
 Axios.defaults.withCredentials = false;
-// let bearer_token = Token.getAccessToken();
 const axiosInstance = Axios.create({
     withCredentials: false,
     baseURL: baseURL,
-    // headers: { Authorization: `Bearer ${bearer_token}` }
 })
 
 axiosInstance.interceptors.response.use((response) => {
