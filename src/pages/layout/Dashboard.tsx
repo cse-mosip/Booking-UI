@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import {
   Grid,
   Container,
-  Typography,
   Toolbar,
   Box,
   CssBaseline,
   Paper,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import {useDispatch} from 'react-redux';
+
 import Copyright from "src/components/Copyright";
 import AppbarComponent from "src/components/AppbarComponent";
 import DrawerComponent from "src/components/DrawerComponent";
@@ -16,7 +17,6 @@ import BackgroundImage from "../../../public/assets/images/background.jpg";
 import BookingTable from "./BookingsTable";
 import BookingAnalysis from "./BookingAnalysis";
 import resourcesService from "src/services/ResourcesServices";    
-import {useDispatch} from 'react-redux';
 import {enqueueResources} from 'src/redux/resource/actions';
 
 

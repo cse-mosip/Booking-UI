@@ -22,6 +22,7 @@ interface Booking {
   status: string;
 }
 
+
 export default function BookingTable() {
   const [bookingsData, setBookingsData] = useState<Booking[]>([]);
 
