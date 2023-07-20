@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import BookingCard from "./BookingCard";
-import BookingServices from "src/services/BookingServices";
-import AppbarComponent from "src/components/AppbarComponent";
-import DrawerComponent from "src/components/DrawerComponent";
 import Copyright from "src/components/Copyright";
 import { Toolbar } from "@mui/material";
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from 'src/redux/reducer';
-import { Resource } from 'src/types';
+
+import AppbarComponent from "src/components/AppbarComponent";
+import DrawerComponent from "src/components/DrawerComponent";
+import { useBookings } from "src/hooks/use-booking/useBookings";
+import { useResources } from "src/hooks/use-resource/useResources";
+
+import BookingCard from "./BookingCard";
 
 const dashboardTheme = createTheme({
   palette: {
@@ -27,26 +27,13 @@ const dashboardTheme = createTheme({
 });
 
 export default function ViewBookingsContainer(): JSX.Element {
-  const resources: Resource[] | null = useSelector((state: AppState) => state.resources.resources);
-  const [bookingsData, setBookingsData] = useState([]);
   const [open, setOpen] = useState(false);
+  const bookingsData = useBookings();
+  const resources = useResources();
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  useEffect(() => {
-    const fetchBookingsData = async () => {
-      try {
-        const data = await BookingServices.getBookings();
-        setBookingsData(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchBookingsData();
-  }, []);
 
   return (
     <ThemeProvider theme={dashboardTheme}>
@@ -91,10 +78,16 @@ export default function ViewBookingsContainer(): JSX.Element {
                 </Box>
               ) : (
                 bookingsData.map((booking, index) => {
-                  const resource = resources?.find((res) => res.id === booking.resource);
+                  const resource = resources?.find(
+                    (res) => res.id === booking.resource
+                  );
                   return (
-                    <BookingCard key={index} booking={booking} resource={resource} />
-                  )
+                    <BookingCard
+                      key={index}
+                      booking={booking}
+                      resource={resource}
+                    />
+                  );
                 })
               )}
             </Box>
