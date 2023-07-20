@@ -21,7 +21,7 @@ import CardActions from "@mui/material/CardActions";
 
 import { Resource } from "src/types";
 import { Booking } from "src/types";
-import BookingServices from "src/services/BookingServices";
+import { useBookingStatus } from "src/hooks/use-booking/useBookingStatus";
 
 const ExpandIndicator = styled(ExpandMoreIcon)(({ theme }) => ({
   transition: theme.transitions.create("transform", {
@@ -38,8 +38,12 @@ interface Props {
 const BookingCard: React.FC<Props> = ({ booking, resource }) => {
   const [expanded, setExpanded] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [status, setStatus] = useState(booking.status);
+  // const [status, setStatus] = useState(booking.status);
 
+  const { status, loading, handleAccept, handleReject } = useBookingStatus(
+    booking.id,
+    booking.status
+  );
   const handleExpand = () => {
     setExpanded(!expanded);
   };
@@ -54,20 +58,12 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
     setAnchorEl(null);
   };
 
-  const handleAccept = async () => {
-    const updatedBooking = await BookingServices.updateBookingStatus(
-      booking.id,
-      "APPROVED"
-    );
-    setStatus(updatedBooking.data.status);
+  const handleAcceptButtonClick = async () => {
+    await handleAccept();
   };
 
-  const handleReject = async () => {
-    const updatedBooking = await BookingServices.updateBookingStatus(
-      booking.id,
-      "REJECTED"
-    );
-    setStatus(updatedBooking.data.status);
+  const handleRejectButtonClick = async () => {
+    await handleReject();
   };
 
   const handleCardClick = () => {
@@ -183,13 +179,15 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
         </Collapse>
       </CardContent>
       <CardActions disableSpacing sx={{ paddingTop: 1 }}>
-        {status === "PENDING" ? (
+        {loading ? (
+          <div>Loading...</div>
+        ) : status === "PENDING" ? (
           <Box
             sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}
           >
             <Button
               variant="contained"
-              onClick={handleReject}
+              onClick={handleRejectButtonClick}
               sx={{
                 backgroundColor: "#E53E3E",
                 color: "#FFFFFF",
@@ -203,7 +201,7 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
             </Button>
             <Button
               variant="contained"
-              onClick={handleAccept}
+              onClick={handleAcceptButtonClick}
               sx={{
                 ml: 1,
                 backgroundColor: "#38A169",
