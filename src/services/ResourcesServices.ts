@@ -1,8 +1,9 @@
 import ToasterMessage from "src/helpers/ToasterMessage";
 import axios from "src/services/HttpServices";
 
-const getResources = async () => {
+const getResources = async (token :string) => {
   try {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.get("/resources");
     if (response.status === 200) {
       return response.data;
@@ -17,9 +18,10 @@ const getResources = async () => {
   }
 };
 
-const createResource = async (resourceName: string, resourceCount: number) => {
+const createResource = async (resourceName: string, resourceCount: number, token :string) => {
   const resourceData = { name: resourceName, count: resourceCount };
   try {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.post("/resources", resourceData);
     if (response.status === 201) {
       return response.data;
@@ -34,8 +36,26 @@ const createResource = async (resourceName: string, resourceCount: number) => {
   }
 };
 
-const getResourceById = async (id: number) => {
+const updateResource = async(id:number,name, count, token :string)=>{
   try {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    const response = await axios.put(`/resources/${id}`,{name,count});
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      ToasterMessage.errorMessage({
+        main_part: "Could not update the resource!",
+      });
+      return false;
+    }
+  } catch (error) {
+    return false;
+  }
+}
+
+const getResourceById = async (id: number, token :string) => {
+  try {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.get(`/resources/${id}`);
     if (response.status === 200) {
       return response.data;
@@ -50,8 +70,9 @@ const getResourceById = async (id: number) => {
   }
 };
 
-const deleteResource = async (id: number) => {
+const deleteResource = async (id: number, token :string) => {
   try {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.delete(`/resources/${id}`);
     if (response.status === 200) {
       return response.data;
@@ -66,8 +87,9 @@ const deleteResource = async (id: number) => {
   }
 };
 
-const getAvailableResourceCount = async (id: number, timeslot: string) => {
+const getAvailableResourceCount = async (id: number, timeslot: string, token :string) => {
   try {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.get(
       `/resources/${id}/available?timeslot=${timeslot}`
     );
@@ -85,9 +107,10 @@ const getAvailableResourceCount = async (id: number, timeslot: string) => {
 };
 
 export default {
-  getResources,
-  createResource,
-  getResourceById,
-  deleteResource,
-  getAvailableResourceCount,
+    getResources,
+    createResource,
+    updateResource,
+    getAvailableResourceCount,
+    deleteResource,
+    getResourceById
 };

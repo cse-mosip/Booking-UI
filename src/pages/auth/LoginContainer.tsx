@@ -57,7 +57,8 @@ export default function LoginContainer() {
     const handleLogin = async () => {
         const res = await authServices.login(username, password);
         if(res?.status === 'ACCEPTED'){
-            const user = {username: username}
+            const user = {username: username, role: res.role, token:res.token}
+            console.log('user: ',user);
             dispatch(enqueueUser(user));
             navigate('/dashboard');
         }else{

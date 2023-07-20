@@ -1,28 +1,16 @@
-import React from "react";
-import {
-  Avatar,
-  Button,
-  Grid,
-  Container,
-  Card,
-  CardContent,
-  Typography,
-  Toolbar,
-  Box,
-  IconButton,
-  Link,
-  CssBaseline,
-  Divider,
-  List,
-  Paper,
-} from "@mui/material";
-import { ExitToApp } from "@mui/icons-material";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useNavigate } from "react-router-dom";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-
-import UniversityLogo from "../../public/assets/images/University_of_Moratuwa_logo.png";
+import { ExitToApp } from '@mui/icons-material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Avatar, IconButton, Toolbar, Typography } from '@mui/material';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import { styled } from '@mui/material/styles';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import UniversityLogo from '../../public/assets/images/University_of_Moratuwa_logo.png';
+import {useDispatch} from 'react-redux';
+import {enqueueUser, removeUser} from 'src/redux/user/actions';
+import authServices from 'src/services/AuthServices';
+import { User } from 'src/types';
+import { AppState } from 'src/redux/reducer';
+import { useSelector } from 'react-redux';
 
 const drawerWidth: number = 240;
 
@@ -31,17 +19,17 @@ interface AppBarProps extends MuiAppBarProps {
 }
 
 const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
+  shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], {
+  transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
+    transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -49,22 +37,21 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 export default function AppbarComponent({ open, toggleDrawer }) {
-  const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+  const user: User | null = useSelector((state: AppState) => state.user.user);
+  const token = user.token;
+  
   const handleLogout = async () => {
-    try {
-      // Perform logout logic here
-      navigate("/");
-    } catch (error) {
-      console.error("Error occurred during logout:", error);
-    }
+    await authServices.logout(token);
+    dispatch(removeUser());
   };
 
   return (
     <AppBar position="absolute" open={open}>
       <Toolbar
         sx={{
-          pr: "24px", // keep right padding when drawer closed
+          pr: '24px', // keep right padding when drawer closed
         }}
       >
         <IconButton
@@ -73,18 +60,20 @@ export default function AppbarComponent({ open, toggleDrawer }) {
           aria-label="open drawer"
           onClick={toggleDrawer}
           sx={{
-            marginRight: "36px",
-            ...(open && { display: "none" }),
+            marginRight: '36px',
+            ...(open && { display: 'none' }),
           }}
         >
           <MenuIcon />
         </IconButton>
-        <Avatar
-          src={UniversityLogo}
-          alt="University of Moratuwa"
-          sx={{ width: 40, height: 40 }}
-          variant="rounded"
-        />
+        <RouterLink to={'/dashboard'}>
+          <Avatar
+            src={UniversityLogo}
+            alt="University of Moratuwa"
+            sx={{ width: 40, height: 40 }}
+            variant="rounded"
+          />
+        </RouterLink>
         <Typography
           component="h1"
           variant="h6"
@@ -92,7 +81,16 @@ export default function AppbarComponent({ open, toggleDrawer }) {
           noWrap
           sx={{ flexGrow: 1 }}
         >
-          Dashboard
+          <RouterLink
+            style={{
+              // Remove <a> tag styling
+              textDecoration: 'none',
+              color: 'inherit',
+            }}
+            to={'/dashboard'}
+          >
+            Dashboard
+          </RouterLink>
         </Typography>
         <IconButton color="inherit" onClick={handleLogout}>
           <ExitToApp />

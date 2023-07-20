@@ -1,21 +1,23 @@
-import { useState } from "react";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Collapse from "@mui/material/Collapse";
+import { Box, IconButton, TextField } from "@mui/material";
+import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
+import CircularProgress from '@mui/material/CircularProgress';
+import Collapse from "@mui/material/Collapse";
+import Container from "@mui/material/Container";
+import CssBaseline from "@mui/material/CssBaseline";
+import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { IconButton, Toolbar } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import AppbarComponent from "src/components/AppbarComponent";
 import DrawerComponent from "src/components/DrawerComponent";
-import Copyright from "src/components/Copyright";
+import resourcesServices from "src/services/ResourcesServices";
+import { Booking, Resource } from "../../types";
 
 const dashboardTheme = createTheme({
   palette: {
@@ -28,7 +30,8 @@ const dashboardTheme = createTheme({
   },
 });
 
-function FutureBookingsTable({ bookings }: any) {
+
+function FutureBookingsTable({ bookings }: { bookings: Booking[] }) {
   return (
     <table style={{ width: "100%" }}>
       <thead>
@@ -41,59 +44,135 @@ function FutureBookingsTable({ bookings }: any) {
         </tr>
       </thead>
       <tbody>
-        {bookings.map((booking: any) => (
-          <tr key={booking.id}>
-            <td style={{ textAlign: "left" }}>{booking.booker}</td>
-            <td style={{ textAlign: "center" }}>{booking.users}</td>
-            <td style={{ textAlign: "center" }}>{booking.date}</td>
-            <td style={{ textAlign: "center" }}>{booking.time}</td>
-            <td style={{ textAlign: "center" }}>{booking.duration}</td>
-          </tr>
-        ))}
+        {bookings.map((booking: Booking,index) => {
+          const startTime = dayjs(booking.bookingStartTime);
+          const endTime = dayjs(booking.bookingEndTime);
+
+          const duration = endTime.diff(startTime)/(1000*3600);
+            return (<tr key={index}>
+              <td style={{textAlign: "left"}}>{booking.booker}</td>
+              <td style={{textAlign: "center"}}>{booking.occupants}</td>
+              <td style={{textAlign: "center"}}>{dayjs(booking.bookingStartTime).format("YYYY-MM-DD")}</td>
+              <td style={{textAlign: "center"}}>{dayjs(booking.bookingStartTime).format('HH:mm')}</td>
+              <td style={{textAlign: "center"}}>{duration}h</td>
+            </tr>);
+          }
+        )
+        }
       </tbody>
     </table>
   );
 }
 
-function ResourceCard({ resource }: any) {
+
+function ResourceCard({ resource } : { resource:Resource }) {
   const [expanded, setExpanded] = useState(false);
+  const [editStarted, setEditStarted] = useState(false);
+  const [name, setName] = useState<String>('');
+  const [nameError, setNameError] = useState(false);
+  const [count, setCount] = useState<Number>(0);
+  const [countError, setCountError] = useState(false);
+
+
+  useEffect(() => {
+    setName(resource.name);
+    setCount(resource.count);
+  }, []);
+
+
+  const futureBookings=resource.bookings;
 
   const handleExpand = () => {
     setExpanded(!expanded);
   };
 
-  const handleEditResource = () => {
-    // Handle edit resource action
-    console.log(`Edit resource with id: ${resource.resource_id}`);
+  const handleEditStart = (e:any) => {
+    setExpanded(false);
+    setName(resource.name);
+    setCount(resource.count)
+    setEditStarted(true);
   };
 
+  const handleUpdate = async (e:any) =>{
+    if(!nameError && !countError){
+      await resourcesServices.updateResource(parseInt(resource.id),name,count);
+      setEditStarted(false);
+    }
+  }
+
   return (
-    <Card sx={{ mt: 2 }} onClick={handleExpand} style={{ cursor: "pointer" }}>
+    <Card sx={{ mt: 2 }}  style={{ cursor: "pointer" }}>
       <CardContent>
-        <Typography variant="subtitle1">
-          Resource ID: {resource.resource_id}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Resource Name: {resource.resource_name}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Faculty: {resource.faculty}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Department: {resource.department}
-        </Typography>
+        {
+          !editStarted?(
+            <Typography variant="subtitle1" >
+              Resource Name: {name}
+            </Typography>
+          ):(
+            <>
+            <Typography variant="subtitle1" >
+              Resource Name:
+            </Typography>
+            <TextField size={"small"} error={nameError} helperText={nameError?'Invalid name':''} aria-errormessage={'text'} value={name} fullWidth={true} onChange={
+              (e)=>{
+                setName(e.target.value)
+                if(e.target.value.length===0){
+                  setNameError(true);
+                }
+              }
+            }  />
+            </>
+          )
+        }
+
+        <Typography variant="body2" color='textSecondary'>Resource ID: {resource.id}</Typography>
+
+        {
+          !editStarted?(
+            <Typography variant="body2" color="textSecondary">
+              Count: {`${count}`}
+            </Typography>
+          ):(
+            <>
+            <Typography variant="body2" color="textSecondary">
+              Count: {resource.count}
+            </Typography>
+              <TextField size={"small"} inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}  error={countError} helperText={countError?'Invalid count':''} value={count} fullWidth={true}
+                onChange={
+                  (e)=>{
+                    const temp = e.target.value;
+                    if(temp!==''){
+                      setCount(parseInt(temp))
+                    }else{
+                      setCount(0);
+                    }
+                    if(temp===''||parseInt(temp)===0){
+                      setCountError(true)
+                    }else{
+                      setCountError(false);
+                    }
+                  }
+                }
+              />
+            </>
+          )
+        }
+
+
         <CardActions disableSpacing>
-          <IconButton onClick={handleExpand} aria-expanded={expanded}>
-            <ExpandMoreIcon
-              style={{
-                transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
-              }}
-            />
-          </IconButton>
-        </CardActions>
+        <IconButton onClick={handleExpand} aria-expanded={expanded}>
+          <ExpandMoreIcon
+            style={{
+              transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+            }}
+          />
+        </IconButton>
+      </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <FutureBookingsTable bookings={resource.futureBookings} />
+          <FutureBookingsTable bookings={futureBookings} />
         </Collapse>
+
+
         <Box
           sx={{
             mt: 2,
@@ -101,93 +180,44 @@ function ResourceCard({ resource }: any) {
             justifyContent: "flex-end",
           }}
         >
-          <Button
-            variant="contained"
-            onClick={handleEditResource}
-            sx={{ backgroundColor: "green", color: "white" }}
-          >
-            Edit Resource
-          </Button>
+          {
+            !editStarted?(
+              <Button
+                variant="contained"
+                onClick={handleEditStart}
+                sx={{ backgroundColor: "green", color: "white" }}
+              >
+                Edit Resource
+              </Button>
+            ):(
+              <Button
+                variant="contained"
+                onClick={handleUpdate}
+                sx={{ backgroundColor: "blue", color: "white" }}
+              >
+                Update
+              </Button>
+            )
+          }
+
+          {
+            editStarted&&(
+              <Button onClick={
+                (e)=>{
+                  setEditStarted(false);
+                }
+              } >Cancel</Button>
+            )
+          }
         </Box>
+
+
       </CardContent>
     </Card>
   );
 }
 
-const resourcesData = [
-  {
-    resource_id: 1,
-    resource_name: "Conference Room C",
-    faculty: "Faculty A",
-    department: "Department X",
-    futureBookings: [
-      {
-        id: 1,
-        booker: "Sarah Johnson",
-        date: "2023-07-17",
-        users: 8,
-        time: "10:00 AM",
-        duration: "2hrs",
-      },
-      {
-        id: 2,
-        booker: "Michael Brown",
-        date: "2023-07-18",
-        users: 10,
-        time: "2:00 PM",
-        duration: "2hrs",
-      },
-    ],
-  },
-  {
-    resource_id: 2,
-    resource_name: "Studio D",
-    faculty: "Faculty B",
-    department: "Department Y",
-    futureBookings: [
-      {
-        id: 3,
-        booker: "Emily Wilson",
-        date: "2023-07-19",
-        users: 4,
-        time: "9:30 AM",
-        duration: "2hrs",
-      },
-      {
-        id: 4,
-        booker: "John Smith",
-        date: "2023-07-20",
-        users: 6,
-        time: "11:00 AM",
-        duration: "2hrs",
-      },
-    ],
-  },
-  {
-    resource_id: 3,
-    resource_name: "Lab E",
-    faculty: "Faculty C",
-    department: "Department Z",
-    futureBookings: [
-      {
-        id: 5,
-        booker: "Jane Doe",
-        date: "2023-07-21",
-        users: 5,
-        time: "3:00 PM",
-        duration: "2hrs",
-      },
-      {
-        id: 6,
-        booker: "Alex Johnson",
-        date: "2023-07-22",
-        users: 3,
-        time: "1:30 PM",
-        duration: "2hrs",
-      },
-    ],
-  },
-];
+
 
 export default function ViewResourcesContainer() {
   const [open, setOpen] = useState(false);
@@ -195,11 +225,55 @@ export default function ViewResourcesContainer() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [resourceData, setResourceData] = useState<Resource[]>([]);
 
-  const handleHomeClick = () => {
-    navigate("/dashboard");
-  };
+
+  useEffect(
+    ()=>{
+
+      const fetch = async ()=>{
+        setLoading(true);
+        const response = await resourcesServices.getResources();
+        if(!response){
+          setError(true);
+          setLoading(false);
+        }else{
+          setError(false);
+          setLoading(false);
+        }
+        const resourcesArray = response.data.map(
+          (resource)=>{
+            const temp = resource.bookings.map(
+              (booking)=>{
+                return {
+                  ResourceName: resource.name,
+                  booker: booking.userId,
+                  reason: booking.reason,
+                  bookingDate: booking.bookedDate,
+                  bookingStartTime: booking.startTime,
+                  bookingEndTime: booking.endTime,
+                  occupants: booking.count,
+                }
+              }
+            );
+            return {
+              id: resource.id,
+              name: resource.name,
+              count: resource.count,
+              bookings: temp
+            }
+          }
+        );
+
+        setResourceData(resourcesArray);
+        setLoading(false);
+      }
+      fetch();
+
+    },[]
+  )
 
   return (
     <ThemeProvider theme={dashboardTheme}>
@@ -208,23 +282,51 @@ export default function ViewResourcesContainer() {
         <AppbarComponent open={open} toggleDrawer={toggleDrawer} />
         <DrawerComponent open={open} toggleDrawer={toggleDrawer} />
 
-        <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
-          <Toolbar />
-          <Paper
-            variant="outlined"
-            sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-          >
-            <Typography component="h1" variant="h4" align="center">
-              VIEW RESOURCES LIST
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              {resourcesData.map((resource) => (
-                <ResourceCard key={resource.resource_id} resource={resource} />
-              ))}
-            </Box>
-          </Paper>
-          <Copyright />
-        </Container>
+      <Container component="main" maxWidth="sm" sx={{ mt:5,mb: 4 }}>
+        <Paper
+          variant="outlined"
+          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+        >
+          <Typography component="h1" variant="h4" align="center">
+            VIEW RESOURCES LIST
+          </Typography>
+          {
+            loading && !error &&(
+              <Box sx={{mt: 2,textAlign:'center'}}>
+                <CircularProgress/>
+              </Box>
+            )
+          }
+          {
+            error&& !loading &&(
+              <Box sx={{mt: 2,textAlign:'center'}}>
+                <Typography color={'red'} variant={'h6'}>Resource Data Fetching Failed</Typography>
+              </Box>
+            )
+          }
+          {!loading && !error &&(<Box sx={{mt: 2}}>
+            {resourceData.map((resource) => (
+              <ResourceCard key={resource.id} resource={resource}/>
+            ))}
+          </Box>)
+          }
+        </Paper>
+        <Box sx={{ mt: 2 }}>
+          <RouterLink to={"/dashboard"} style={{textDecoration: 'none', color: 'inherit'}}>
+            <Button
+              variant="contained"
+              sx={{ width: "100%" }}
+            >
+              Go Back
+            </Button>
+          </RouterLink>
+        </Box>
+        <Box sx={{ mt: 4 }}>
+          <Typography variant="body2" color="text.secondary" align="center">
+            © {new Date().getFullYear()} MOSIP
+          </Typography>
+        </Box>
+      </Container>
       </Box>
     </ThemeProvider>
   );

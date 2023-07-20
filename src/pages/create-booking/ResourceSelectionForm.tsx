@@ -1,34 +1,30 @@
-import React, {useEffect, useState} from 'react';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import {MenuItem} from '@mui/material';
-import dayjs from "dayjs";
-import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
-import InputAdornment from '@mui/material/InputAdornment';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
-import bookingService from "src/services/BookingServices";
-import CircularProgress from '@mui/material/CircularProgress';
+import { MenuItem } from '@mui/material';
 import Alert from '@mui/material/Alert';
-import { useDispatch, useSelector } from 'react-redux';
-import { Resource } from 'src/types';
+import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
+import dayjs from 'dayjs';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { formatDate, getTimeSlots } from 'src/helpers/utils';
 import { AppState } from 'src/redux/reducer';
-import {formatDate, getTimeSlots} from "src/helpers/utils"
+import bookingService from 'src/services/BookingServices';
+import { Resource, User } from 'src/types';
 
 type ResourceSelectionFormProps = {
-    formik: any;
+  formik: any;
 };
 interface Option {
-    id: number;
-    value: string;
-    label: string;
+  id: number;
+  value: string;
+  label: string;
 }
 
 // const bookedSlots = [
@@ -64,212 +60,232 @@ interface Option {
 //     }
 //   ];
 
-export default function ResourceSelectionForm(props :ResourceSelectionFormProps) {
-    const [loader, setLoader] = useState(false);
-    const [flagForBookingDate, setFlagForBookingDate] = useState(false);
-    const [errorInBookedSlots, setErrorInBookedSlots] = useState(null);
-    const [bookingEndTimeError, setBookingEndTimeError] = useState(null);
-    const [timeSlots, setTimeSlots] = useState([]);
-    const resources: Resource[] | null = useSelector((state: AppState) => state.resources.resources);
-    
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
+export default function ResourceSelectionForm(
+  props: ResourceSelectionFormProps
+) {
+  const [loader, setLoader] = useState(false);
+  const [flagForBookingDate, setFlagForBookingDate] = useState(false);
+  const [errorInBookedSlots, setErrorInBookedSlots] = useState(null);
+  const [bookingEndTimeError, setBookingEndTimeError] = useState(null);
+  const [timeSlots, setTimeSlots] = useState([]);
+  const resources: Resource[] | null = useSelector(
+    (state: AppState) => state.resources.resources
+  );
+  const user: User | null = useSelector((state: AppState) => state.user.user);
 
-    const options: Option[] = [];
-    if(resources){
-        resources.forEach((resource) => {
-            const option: Option = {
-              id: parseInt(resource.id),
-              value: resource.name,
-              label: resource.name,
-            };
-            options.push(option);
-        });
-        console.log('options: ',options);
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+
+  const options: Option[] = [];
+  if (resources) {
+    resources.forEach((resource) => {
+      const option: Option = {
+        id: parseInt(resource.id),
+        value: resource.name,
+        label: resource.name,
+      };
+      options.push(option);
+    });
+  }
+
+  const handleBookingStartTime = (time: any) => {
+    props.formik.values.bookingStartTime = time;
+  };
+
+  const handleBookingEndTime = (time: any) => {
+    const date1 = new Date(time.$d);
+    const date2 = new Date(props.formik.values.bookingStartTime.$d);
+    if (date1 > date2) {
+      props.formik.values.bookingEndTime = time;
+      setBookingEndTimeError(null);
+    } else {
+      setBookingEndTimeError('End time should be greater than the start time');
     }
+  };
 
-    console.log('adoo');
-    
+  const checkAvailability = async (date: any) => {
+    setFlagForBookingDate(true);
+    setLoader(true);
+    if (props.formik.values.ResourceName && date) {
+      props.formik.values.bookingDate = date;
+      const resourceId = resources.find(
+        (item) => item.name === props.formik.values.ResourceName
+      ).id;
+      const dateString = formatDate(date);
+      setErrorInBookedSlots(null);
+      const token = user.token;
+      const response = await bookingService.getBookedTimeSlots(
+        resourceId,
+        dateString,
+        token,
+      );
+      setTimeout(() => {
+        setLoader(false);
+      }, 1000);
+      if (response.status === 'OK') {
+        setErrorInBookedSlots(null);
+        setTimeSlots(getTimeSlots(response.data));
+      } else {
+        setErrorInBookedSlots('Could not get time slots!');
+      }
+    } else {
+      setErrorInBookedSlots(
+        'You have to select a resource before booking a date'
+      );
+      setTimeout(() => {
+        setLoader(false);
+      }, 1000);
+    }
+  };
 
-    const handleBookingStartTime = (time :any) => {
-        props.formik.values.bookingStartTime = time;
-    };
+  return (
+    <React.Fragment>
+      <Typography variant="h6" gutterBottom>
+        Booking Details
+      </Typography>
 
-    const handleBookingEndTime = (time :any) => {
-        const date1 = new Date(time.$d);
-        const date2 = new Date(props.formik.values.bookingStartTime.$d);
-        if(date1 > date2){
-            props.formik.values.bookingEndTime = time;
-            setBookingEndTimeError(null);
-        }else{
-            setBookingEndTimeError('End time should be greater than the start time');
-        }
-    };
-
-    const checkAvailability = async (date: any) => {
-        setFlagForBookingDate(true);
-        setLoader(true);
-        if(props.formik.values.ResourceName && date){
-            props.formik.values.bookingDate = date;
-            const resourceId = (resources.find((item) => item.name === props.formik.values.ResourceName)).id;
-            const dateString = formatDate(date)
-            setErrorInBookedSlots(null);
-            const response = await bookingService.getBookedTimeSlots(resourceId, dateString);
-            setTimeout(() => {
-              setLoader(false);
-            }, 1000);
-            if(response.status === 'OK'){
-                setErrorInBookedSlots(null);
-                setTimeSlots(getTimeSlots(response.data))
-            }else{
-                setErrorInBookedSlots('Could not get time slots!');
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <TextField
+            id="ResourceName"
+            name="ResourceName"
+            label="Select the Resource you want to book"
+            fullWidth
+            autoComplete="shipping address-line1"
+            variant="standard"
+            select
+            value={props.formik.values.ResourceName}
+            onChange={props.formik.handleChange}
+            error={
+              props.formik.touched.ResourceName &&
+              Boolean(props.formik.errors.ResourceName)
             }
-        }else{
-            setErrorInBookedSlots('You have to select a resource before booking a date')
-            setTimeout(() => {
-                setLoader(false);
-              }, 1000);
-        }
+            helperText={
+              props.formik.touched.ResourceName &&
+              props.formik.errors.ResourceName
+            }
+          >
+            {options.map((option) => (
+              <MenuItem key={option.id} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="reason"
+            name="reason"
+            label="State the reason for the booking"
+            fullWidth
+            autoComplete="None"
+            variant="standard"
+            value={props.formik.values.reason}
+            onChange={props.formik.handleChange}
+            error={
+              props.formik.touched.reason && Boolean(props.formik.errors.reason)
+            }
+            helperText={
+              props.formik.touched.reason && props.formik.errors.reason
+            }
+          />
+        </Grid>
+        <Grid item xs={12} sm={12}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Select the booking date"
+              renderLoading={() => (
+                <TextField
+                  id="bookingDate"
+                  name="bookingDate"
+                  error={
+                    props.formik.touched.bookingDate &&
+                    Boolean(props.formik.errors.bookingDate)
+                  }
+                  helperText={
+                    props.formik.touched.bookingDate &&
+                    props.formik.errors.bookingDate
+                  }
+                />
+              )}
+              value={props.formik.values.bookingDate}
+              onChange={(newValue) => checkAvailability(newValue)}
+              defaultValue={dayjs()}
+              disablePast
+            />
+          </LocalizationProvider>
+        </Grid>
+        {flagForBookingDate ? (
+          <Grid item xs={12} sm={12}>
+            {timeSlots.length > 0 || errorInBookedSlots ? (
+              <Typography variant="h6" gutterBottom>
+                Booked slots for your selected date:
+              </Typography>
+            ) : null}
 
-    }
-    
+            <Stack direction="column" spacing={1}>
+              {loader ? (
+                <CircularProgress color="inherit" size={30} />
+              ) : (
+                timeSlots.map((slot, index) => (
+                  <Chip key={index} label={slot} />
+                ))
+              )}
 
-    return (
-        <React.Fragment>
-            <Typography variant="h6" gutterBottom>
-                Booking Details
-            </Typography>
-
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <TextField
-                        id="ResourceName"
-                        name="ResourceName"
-                        label="Select the Resource you want to book"
-                        fullWidth
-                        autoComplete="shipping address-line1"
-                        variant="standard"
-                        select
-                        value={props.formik.values.ResourceName}
-                        onChange={props.formik.handleChange}
-                        error={props.formik.touched.ResourceName && Boolean(props.formik.errors.ResourceName)}
-                        helperText={props.formik.touched.ResourceName && props.formik.errors.ResourceName}
-                    >
-                        {options.map(option => (
-                            <MenuItem key={option.id} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        id="reason"
-                        name="reason"
-                        label="State the reason for the booking"
-                        fullWidth
-                        autoComplete="None"
-                        variant="standard"
-                        value={props.formik.values.reason}
-                        onChange={props.formik.handleChange}
-                        error={props.formik.touched.reason && Boolean(props.formik.errors.reason)}
-                        helperText={props.formik.touched.reason && props.formik.errors.reason}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={12}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                            label="Select the booking date" 
-                            renderLoading = {
-                                () => (
-                                    <TextField
-                                    id="bookingDate"
-                                    name="bookingDate"
-                                    error={props.formik.touched.bookingDate && Boolean(props.formik.errors.bookingDate)}
-                                    helperText={props.formik.touched.bookingDate && props.formik.errors.bookingDate}
-                                  />   
-                                )
-                            }
-                            value={props.formik.values.bookingDate}
-                            onChange={(newValue) => checkAvailability(newValue)}
-                            defaultValue={dayjs()} 
-                            disablePast
-                        />
-                    </LocalizationProvider>
-                </Grid>
-                {flagForBookingDate ? 
-                    <Grid item xs={12} sm={12}>
-                        {timeSlots.length > 0 || errorInBookedSlots?
-                            <Typography variant="h6" gutterBottom>
-                                Booked slots for your selected date:
-                            </Typography>
-                            :
-                            null
-                        }
-
-                        <Stack direction="column" spacing={1}>
-
-                            {
-                            loader ?
-                            <CircularProgress color="inherit" size={30} /> 
-                            : 
-                            timeSlots.map((slot,index)=>(
-                                <Chip key={index} label={slot} />
-                            )) 
-                            }
-
-                            {errorInBookedSlots ? 
-                            <Alert severity="error">{errorInBookedSlots}</Alert>
-                            : null
-                            }
-
-                        </Stack>
-                    </Grid>
-                    : null
-                }
-                <Grid item xs={12}>
-                    <TextField
-                        id="occupants"
-                        name="occupants"
-                        label="Number of Occupants"
-                        value={props.formik.values.occupants}
-                        onChange={props.formik.handleChange}
-                        error={props.formik.touched.occupants && Boolean(props.formik.errors.occupants)}
-                        helperText={props.formik.touched.occupants && props.formik.errors.occupants}
-                        variant="standard"
-                    />
-                </Grid>
-                <Grid item xs={6}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <MobileTimePicker 
-                            label="Select the booking start time"
-                            maxTime={dayjs(`${formattedDate}T22:30`)}
-                            minTime={dayjs(`${formattedDate}T07:30`)}
-                            value={props.formik.values.bookingStartTime}
-                            onChange={handleBookingStartTime}
-                            defaultValue={dayjs(`${formattedDate}T08:00`)} 
-                        />
-                        {':'}
-                    </LocalizationProvider>
-                </Grid>
-                <Grid item xs={6}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        {':'}
-                        <MobileTimePicker 
-                            label="Select the booking end time"
-                            maxTime={dayjs(`${formattedDate}T22:30`)}
-                            minTime={dayjs(`${formattedDate}T07:30`)}
-                            value={props.formik.values.bookingEndTime}
-                            onChange={handleBookingEndTime}
-                            defaultValue={dayjs(`${formattedDate}T10:00`)} 
-                         />
-                    </LocalizationProvider>
-                    {bookingEndTimeError ? <Alert severity="error">{bookingEndTimeError}</Alert> : null }
-                </Grid>
-            </Grid>
-        </React.Fragment>
-    );
+              {errorInBookedSlots ? (
+                <Alert severity="error">{errorInBookedSlots}</Alert>
+              ) : null}
+            </Stack>
+          </Grid>
+        ) : null}
+        <Grid item xs={12}>
+          <TextField
+            id="occupants"
+            name="occupants"
+            label="Number of Occupants"
+            value={props.formik.values.occupants}
+            onChange={props.formik.handleChange}
+            error={
+              props.formik.touched.occupants &&
+              Boolean(props.formik.errors.occupants)
+            }
+            helperText={
+              props.formik.touched.occupants && props.formik.errors.occupants
+            }
+            variant="standard"
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <MobileTimePicker
+              label="Select the booking start time"
+              maxTime={dayjs(`${formattedDate}T22:30`)}
+              minTime={dayjs(`${formattedDate}T07:30`)}
+              value={props.formik.values.bookingStartTime}
+              onChange={handleBookingStartTime}
+              defaultValue={dayjs(`${formattedDate}T08:00`)}
+            />
+          </LocalizationProvider>
+        </Grid>
+        <Grid item xs={6}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <MobileTimePicker
+              label="Select the booking end time"
+              maxTime={dayjs(`${formattedDate}T22:30`)}
+              minTime={dayjs(`${formattedDate}T07:30`)}
+              value={props.formik.values.bookingEndTime}
+              onChange={handleBookingEndTime}
+              defaultValue={dayjs(`${formattedDate}T10:00`)}
+            />
+          </LocalizationProvider>
+          {bookingEndTimeError ? (
+            <Alert severity="error">{bookingEndTimeError}</Alert>
+          ) : null}
+        </Grid>
+      </Grid>
+    </React.Fragment>
+  );
 }

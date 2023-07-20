@@ -1,21 +1,32 @@
 export type Resource = {
     id: string;
     name: string;
-    category: string;
-    description: string;
+    count: number;
+    bookings: Booking[];
 }
 
 export type Booking = {
-    ResourceName: string;
+    ResourceName?: string;
+    booker?: string;
     reason?: string;
-    bookingDate: any;
-    bookingStartTime: any;
-    bookingEndTime: any;
-    occupants: number;
+    bookingDate?: any;
+    bookingStartTime?: any;
+    bookingEndTime?: any;
+    occupants?: number;
+    id?: string;
+    resource?: number;
+    userId?: string;
+    bookedDate?: string;
+    startTime?: string;
+    endTime?: string;
+    count?: number;
+    status?: string;
 }
 
 export type User = {
     username: string;
+    role: string;
+    token: string;
 }
 
 export type BookingForm = {
@@ -31,3 +42,7 @@ export type BookingForm = {
     bookingStartTime?: any,
     occupants?: string,
 }
+
+export const ADMIN = 'ADMIN';
+export const RESOURCE_MANAGER = 'RESOURCE_MANAGER';
+export const RESOURCE_USER = 'RESOURCE_USER';
