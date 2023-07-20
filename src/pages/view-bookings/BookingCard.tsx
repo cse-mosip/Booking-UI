@@ -174,8 +174,8 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
               <TableBody>
                 <TableRow>
                   <TableCell>{(new Date(booking.bookedDate)).toLocaleDateString()}</TableCell>
-                  <TableCell>{(new Date(booking.startTime)).toLocaleString()}</TableCell>
-                  <TableCell>{(new Date(booking.endTime)).toLocaleString()}</TableCell>
+                  <TableCell>{(new Date(booking.startTime)).toLocaleTimeString()}</TableCell>
+                  <TableCell>{(new Date(booking.endTime)).toLocaleTimeString()}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
