@@ -16,11 +16,12 @@ import { AppState } from 'src/redux/reducer';
 export default function BookingTable() {
   const [bookingsData, setBookingsData] = useState<Booking[]>([]);
   const user: User | null = useSelector((state: AppState) => state.user.user);
+  const token = user.token;
 
   useEffect(() => {
     const fetchBookingsData = async () => {
       try {
-        const data: Booking[] = await BookingServices.getBookings();
+        const data: Booking[] = await BookingServices.getBookings(token);
         setBookingsData(
           data.map((b) => {
             return {
