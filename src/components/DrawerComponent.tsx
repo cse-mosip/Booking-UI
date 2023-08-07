@@ -9,6 +9,9 @@ import ListItemText from '@mui/material/ListItemText';
 import { styled } from '@mui/material/styles';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { User } from "../types";
+import { useSelector } from "react-redux";
+import { AppState } from "../redux/reducer";
 
 const drawerWidth: number = 240;
 
@@ -39,6 +42,9 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function DrawerComponent({ open, toggleDrawer }) {
+  const user: User | null = useSelector(
+    (state: AppState) => state.user.user
+  );
   return (
     <Drawer variant="permanent" open={open}>
       <Toolbar
@@ -74,12 +80,15 @@ export default function DrawerComponent({ open, toggleDrawer }) {
             </ListItemIcon>
             <ListItemText primary="Bookings" />
           </ListItemButton>
-          <ListItemButton component={RouterLink} to={'/addresource'}>
-            <ListItemIcon>
-              <AddBox />
-            </ListItemIcon>
-            <ListItemText primary="Add New Resource" />
-          </ListItemButton>
+          {
+            user.role === "RESOURCE_USER" ? null :
+            <ListItemButton component={RouterLink} to={'/addresource'}>
+              <ListItemIcon>
+                <AddBox />
+              </ListItemIcon>
+              <ListItemText primary="Add New Resource" />
+            </ListItemButton>
+          }
           <ListItemButton component={RouterLink} to={'/viewresources'}>
             <ListItemIcon>
               <PieChart />
