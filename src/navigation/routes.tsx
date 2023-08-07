@@ -6,6 +6,7 @@ import ViewBookingsContainer from 'src/pages/view-bookings/ViewBookingsContainer
 import AddNewResourceContainer from 'src/pages/add-resource/AddNewResourceContainer';
 import ViewResourcesContainer from 'src/pages/view-resources/ViewResourcesContainer';
 import LoginContainer from 'src/pages/auth/LoginContainer';
+import CheckInOutContainer from 'src/pages/check-in-out/CheckInOutContainer'
 
 const AppRoutes = () => {
 
@@ -18,6 +19,11 @@ const AppRoutes = () => {
                 <Route path="/bookings" element={<ViewBookingsContainer/>}/>
                 <Route path="/addresource" element={<AddNewResourceContainer/>}/>
                 <Route path="/viewresources" element={<ViewResourcesContainer/>}/>
+                <Route path="resources">
+                    <Route path=":resourceId">
+                        <Route path="check-in-out" element={<CheckInOutContainer />} />
+                    </Route>
+                </Route>
             </Routes>
         </BrowserRouter>
     );
