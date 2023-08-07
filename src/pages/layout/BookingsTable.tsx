@@ -1,11 +1,11 @@
-import Link from '@mui/material/Link';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { Grid } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import React, { useEffect, useState } from "react";
 import { Link as RouterLink } from 'react-router-dom';
 import BookingServices from 'src/services/BookingServices';
 import Title from './Title';
@@ -20,9 +20,15 @@ export default function BookingTable() {
   useEffect(() => {
     const fetchBookingsData = async () => {
       try {
-        const token = user.token;
-        const data = await BookingServices.getBookings(token);
-        setBookingsData(data);
+        const data: Booking[] = await BookingServices.getBookings();
+        setBookingsData(
+          data.map((b) => {
+            return {
+              ...b,
+              bookedDate: new Date(b.bookedDate).toLocaleDateString(),
+            };
+          })
+        );
       } catch (error) {
         console.log(error);
       }
