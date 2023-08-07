@@ -9,7 +9,7 @@ import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import AppbarComponent from "src/components/AppbarComponent";
 import Copyright from "src/components/Copyright";
@@ -56,13 +56,18 @@ export default function AddNewResourceContainer() {
     (state: AppState) => state.user.user
   );
 
-  if (!user) {
-    navigate("/");
-  }
 
-  if (user.role === "RESOURCE_USER") {
-    navigate("/dashboard");
-  }
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  
+    if (user.role === "RESOURCE_USER") {
+      navigate("/dashboard");
+    }
+  }, [])
+  
+
   
   const [activeStep, setActiveStep] = React.useState(0);
   const [resourceName, setResourceName] = useState("");
