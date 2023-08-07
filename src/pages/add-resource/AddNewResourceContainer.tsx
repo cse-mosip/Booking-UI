@@ -51,16 +51,25 @@ const resourceCountValidationSchema = yup.object({
 });
 
 export default function AddNewResourceContainer() {
+  const navigate = useNavigate();
+  const user: User | null = useSelector(
+    (state: AppState) => state.user.user
+  );
+
+  if (!user) {
+    navigate("/");
+  }
+
+  if (user.role === "RESOURCE_USER") {
+    navigate("/dashboard");
+  }
+  
   const [activeStep, setActiveStep] = React.useState(0);
   const [resourceName, setResourceName] = useState("");
   const [resourceCount, setResourceCount] = useState(1);
   const [resourceNameError, setResourceNameError] = useState("");
   const [resourceCountError, setResourceCountError] = useState("");
   const [open, setOpen] = useState(false);
-
-  const user: User | null = useSelector(
-    (state: AppState) => state.user.user
-  );
 
   const toggleDrawer = () => {
     setOpen(!open);
