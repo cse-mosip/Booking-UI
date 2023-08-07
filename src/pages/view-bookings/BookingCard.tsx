@@ -21,10 +21,12 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Chip from "@mui/material/Chip";
 import { green, red, grey } from "@mui/material/colors";
+import { useDispatch, useSelector } from "react-redux";
 
-import { Resource } from "src/types";
-import { Booking } from "src/types";
+import { AppState } from "src/redux/reducer";
+import { Booking, Resource, User } from "src/types";
 import { useBookingStatus } from "src/hooks/use-booking/useBookingStatus";
+
 
 const ExpandIndicator = styled(ExpandMoreIcon)(({ theme }) => ({
   transition: theme.transitions.create("transform", {
@@ -41,6 +43,12 @@ interface Props {
 const BookingCard: React.FC<Props> = ({ booking, resource }) => {
   const [expanded, setExpanded] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const user:User|null = useSelector((state:AppState)=>state.user.user);
+  const token = user.token;
+  const role = user.role;
+
+  //     ADMIN , RESOURCE_MANAGER, RESOURCE_USER
 
   const { status, loading, handleAccept, handleReject } = useBookingStatus(
     booking.id,
@@ -309,6 +317,7 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
             <Button
               variant="contained"
               onClick={handleRejectButtonClick}
+              disabled={role=='RESOURCE_USER'}
               sx={{
                 backgroundColor: "#E53E3E",
                 color: "#FFFFFF",
@@ -323,6 +332,8 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
             <Button
               variant="contained"
               onClick={handleAcceptButtonClick}
+              disabled={role=='RESOURCE_USER'}
+
               sx={{
                 ml: 1,
                 backgroundColor: "#38A169",

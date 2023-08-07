@@ -30,6 +30,9 @@ export default function ViewBookingsContainer(): JSX.Element {
   const resources: Resource[] | null = useSelector(
     (state: AppState) => state.resources.resources
   );
+
+
+
   const [open, setOpen] = useState(false);
   const bookingsData = useBookings();
   const [tabValue, setTabValue] = useState(0);

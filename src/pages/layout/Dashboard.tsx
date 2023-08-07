@@ -33,6 +33,7 @@ const dashboardTheme = createTheme({
 });
 
 const Dashboard = () => {
+
   const [open, setOpen] = useState(false);
   const user: User | null = useSelector((state: AppState) => state.user.user);
 
@@ -48,7 +49,6 @@ const Dashboard = () => {
 
   const SetResources = async () => {
       const token = user.token;
-      console.log('token: ',token);
       const resourceData = await resourcesService.getResources(token);
       if(resourceData?.status){
           dispatch(enqueueResources(resourceData.data));
