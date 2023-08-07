@@ -1,24 +1,23 @@
 import jwtDecode from "jwt-decode";
-import jwt from 'jsonwebtoken';
 
-const setAccessToken = (value) => {
-  localStorage.setItem("AccessToken", value);
-};
+//local storage is not using anymore for authentication 
+// const setAccessToken = (value) => {
+//   localStorage.setItem("AccessToken", value);
+// };
 
-const getAccessToken = () => {
-  return localStorage.getItem("AccessToken");
-};
+// const getAccessToken = () => {
+//   return localStorage.getItem("AccessToken");
+// };
 
-const removeAccessToken = () => {
-  console.log('removed access token');
-  // localStorage.removeItem("AccessToken");
-}
+// const removeAccessToken = () => {
+//   console.log('removed access token');
+//   // localStorage.removeItem("AccessToken");
+// }
 
-const getAuth = () => {
-  const jwt = localStorage.getItem("AccessToken");
+const getAuth = (token :string) => {
 
   try {
-    const user = jwtDecode(jwt);
+    const user = jwtDecode(token);
     // console.log("user :", user);
     return user;
   } catch (err) {
@@ -27,8 +26,5 @@ const getAuth = () => {
 }
 
 export default {
-  setAccessToken,
-  getAccessToken,
-  removeAccessToken,
   getAuth
 };

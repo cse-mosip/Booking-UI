@@ -111,7 +111,9 @@ export default function BookingContainer() {
       formValues['count'] = formValues.occupants;
       formValues['resourceId'] = String((resources.find((item) => item.name === formValues.ResourceName)).id);
       formValues['username'] = user.username;
-      const response = await bookingService.bookResource(formValues);
+
+      const token = user.token;
+      const response = await bookingService.bookResource(formValues,token);
       setTimeout(() => {
         setLoader(false);
       }, 200);

@@ -14,7 +14,7 @@ export type Booking = {
     bookingEndTime?: any;
     occupants?: number;
     id?: string;
-    resource?: number;
+    resource?: string;
     userId?: string;
     bookedDate?: string;
     startTime?: string;

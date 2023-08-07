@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {useDispatch} from 'react-redux';
-
 import Copyright from "src/components/Copyright";
 import AppbarComponent from "src/components/AppbarComponent";
 import DrawerComponent from "src/components/DrawerComponent";
@@ -18,7 +17,9 @@ import BookingTable from "./BookingsTable";
 import BookingAnalysis from "./BookingAnalysis";
 import resourcesService from "src/services/ResourcesServices";    
 import {enqueueResources} from 'src/redux/resource/actions';
-
+import { User } from 'src/types';
+import { useSelector } from 'react-redux';
+import { AppState } from 'src/redux/reducer';
 
 const dashboardTheme = createTheme({
   palette: {
@@ -32,7 +33,9 @@ const dashboardTheme = createTheme({
 });
 
 const Dashboard = () => {
+
   const [open, setOpen] = useState(false);
+  const user: User | null = useSelector((state: AppState) => state.user.user);
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -41,13 +44,12 @@ const Dashboard = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setTimeout(() => {
-      SetResources();
-    }, 1000);
+    SetResources();
   }, [])
 
   const SetResources = async () => {
-      const resourceData = await resourcesService.getResources();
+      const token = user.token;
+      const resourceData = await resourcesService.getResources(token);
       if(resourceData?.status){
           dispatch(enqueueResources(resourceData.data));
       }
