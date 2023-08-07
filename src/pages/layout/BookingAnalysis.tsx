@@ -12,6 +12,9 @@ import { Grid, useMediaQuery, useTheme } from "@mui/material";
 
 import { useBookings } from "src/hooks/use-booking/useBookings";
 import { useResources } from "src/hooks/use-resource/useResources";
+import { User } from "src/types";
+import { useSelector } from "react-redux";
+import { AppState } from "src/redux/reducer";
 
 import {
   getPendingBookingsCount,
@@ -37,6 +40,10 @@ const BookingAnalysis: React.FC = () => {
   const theme = useTheme();
   const isLgScreen = useMediaQuery(theme.breakpoints.up("lg"));
 
+  const user: User | null = useSelector((state: AppState) => state.user.user);
+  const token = user.token;
+  const role = user.role;
+
   const pendingBookingsCount = getPendingBookingsCount(bookingsData);
   const mostAskedTimes = getMostAskedTimes(bookingsData);
   const mostActiveUsers = getMostActiveUsers(bookingsData);
@@ -57,12 +64,15 @@ const BookingAnalysis: React.FC = () => {
             <MostAskedTimesChart data={mostAskedTimes} />
           </CardContent>
         </Card>
-        <Card sx={{ flex: 1, minWidth: 300, margin: 1 }}>
-          <CardHeader avatar={<PersonIcon />} title="Most Active Users" />
-          <CardContent>
-            <MostActiveUsersPieChart data={mostActiveUsers} />
-          </CardContent>
-        </Card>
+        {role !== "RESOURCE_USER" ? (
+          <Card sx={{ flex: 1, minWidth: 300, margin: 1 }}>
+            <CardHeader avatar={<PersonIcon />} title="Most Active Users" />
+            <CardContent>
+              <MostActiveUsersPieChart data={mostActiveUsers} />
+            </CardContent>
+          </Card>
+        ) : null}
+
         <Card sx={{ flex: 1, minWidth: 300, margin: 1 }}>
           <CardHeader avatar={<BusinessIcon />} title="Most Used Resources" />
           <CardContent>

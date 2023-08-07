@@ -6,14 +6,14 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import BookingCard from "./BookingCard";
-import BookingServices from "src/services/BookingServices";
 import AppbarComponent from "src/components/AppbarComponent";
 import DrawerComponent from "src/components/DrawerComponent";
 import Copyright from "src/components/Copyright";
-import { Toolbar } from "@mui/material";
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from 'src/redux/reducer';
-import { Resource } from 'src/types';
+import { Toolbar, Tabs, Tab } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { AppState } from "src/redux/reducer";
+import { Booking, Resource, User } from "src/types";
+import { useBookings } from "src/hooks/use-booking/useBookings";
 
 const dashboardTheme = createTheme({
   palette: {
@@ -27,26 +27,36 @@ const dashboardTheme = createTheme({
 });
 
 export default function ViewBookingsContainer(): JSX.Element {
-  const resources: Resource[] | null = useSelector((state: AppState) => state.resources.resources);
-  const [bookingsData, setBookingsData] = useState([]);
+  const resources: Resource[] | null = useSelector(
+    (state: AppState) => state.resources.resources
+  );
+
+
+
   const [open, setOpen] = useState(false);
+  const bookingsData = useBookings();
+  const [tabValue, setTabValue] = useState(0);
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  useEffect(() => {
-    const fetchBookingsData = async () => {
-      try {
-        const data = await BookingServices.getBookings();
-        setBookingsData(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const pendingBookings = bookingsData.filter(
+    (booking) => booking.status === "PENDING"
+  );
+  const approvedBookings = bookingsData.filter(
+    (booking) => booking.status === "APPROVED"
+  );
+  const rejectedBookings = bookingsData.filter(
+    (booking) => booking.status === "REJECTED"
+  );
 
-    fetchBookingsData();
-  }, []);
+  // Sort bookings by date in descending order
+  const sortByDateDesc = (a: Booking, b: Booking) =>
+  new Date(b.bookedDate).getTime() - new Date(a.bookedDate).getTime();
+  pendingBookings.sort(sortByDateDesc);
+  approvedBookings.sort(sortByDateDesc);
+  rejectedBookings.sort(sortByDateDesc);
 
   return (
     <ThemeProvider theme={dashboardTheme}>
@@ -55,7 +65,7 @@ export default function ViewBookingsContainer(): JSX.Element {
         <AppbarComponent open={open} toggleDrawer={toggleDrawer} />
         <DrawerComponent open={open} toggleDrawer={toggleDrawer} />
 
-        <Container component="main" maxWidth="md">
+        <Container component="main" maxWidth="lg">
           <Toolbar />
           <Paper
             variant="outlined"
@@ -73,8 +83,16 @@ export default function ViewBookingsContainer(): JSX.Element {
             >
               VIEW BOOKINGS LIST
             </Typography>
+            <Tabs
+              value={tabValue}
+              onChange={(e, newValue) => setTabValue(newValue)}
+            >
+              <Tab label="Pending" />
+              <Tab label="Approved" />
+              <Tab label="Rejected" />
+            </Tabs>
             <Box sx={{ mt: 2 }}>
-              {bookingsData.length === 0 ? (
+              {tabValue === 0 && pendingBookings.length === 0 && (
                 <Box
                   sx={{
                     display: "flex",
@@ -86,17 +104,81 @@ export default function ViewBookingsContainer(): JSX.Element {
                   }}
                 >
                   <Typography variant="h6" color="textSecondary">
-                    There are no bookings available.
+                    There are no pending bookings.
                   </Typography>
                 </Box>
-              ) : (
-                bookingsData.map((booking, index) => {
-                  const resource = resources?.find((res) => res.id === booking.resource);
-                  return (
-                    <BookingCard key={index} booking={booking} resource={resource} />
-                  )
-                })
               )}
+              {tabValue === 1 && approvedBookings.length === 0 && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "200px",
+                    backgroundColor: "#f0f0f0",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <Typography variant="h6" color="textSecondary">
+                    There are no approved bookings.
+                  </Typography>
+                </Box>
+              )}
+              {tabValue === 2 && rejectedBookings.length === 0 && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "200px",
+                    backgroundColor: "#f0f0f0",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <Typography variant="h6" color="textSecondary">
+                    There are no rejected bookings.
+                  </Typography>
+                </Box>
+              )}
+              {tabValue === 0 &&
+                pendingBookings.map((booking, index) => {
+                  const resource = resources?.find(
+                    (res) => res.id === booking.resource
+                  );
+                  return (
+                    <BookingCard
+                      key={index}
+                      booking={booking}
+                      resource={resource}
+                    />
+                  );
+                })}
+              {tabValue === 1 &&
+                approvedBookings.map((booking, index) => {
+                  const resource = resources?.find(
+                    (res) => res.id === booking.resource
+                  );
+                  return (
+                    <BookingCard
+                      key={index}
+                      booking={booking}
+                      resource={resource}
+                    />
+                  );
+                })}
+              {tabValue === 2 &&
+                rejectedBookings.map((booking, index) => {
+                  const resource = resources?.find(
+                    (res) => res.id === booking.resource
+                  );
+                  return (
+                    <BookingCard
+                      key={index}
+                      booking={booking}
+                      resource={resource}
+                    />
+                  );
+                })}
             </Box>
           </Paper>
           <Copyright />

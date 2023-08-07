@@ -7,29 +7,21 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import React, { useEffect, useState } from "react";
 import { Link as RouterLink } from 'react-router-dom';
-import BookingServices from "src/services/BookingServices";
-import Title from "./Title";
-
-interface Booking {
-  id: number;
-  resource: number;
-  userId: string;
-  bookedDate: string;
-  startTime: string;
-  endTime: string;
-  count: number;
-  reason: string;
-  status: string;
-}
-
+import BookingServices from 'src/services/BookingServices';
+import Title from './Title';
+import { Booking, User } from 'src/types';
+import { useSelector } from 'react-redux';
+import { AppState } from 'src/redux/reducer';
 
 export default function BookingTable() {
   const [bookingsData, setBookingsData] = useState<Booking[]>([]);
+  const user: User | null = useSelector((state: AppState) => state.user.user);
+  const token = user.token;
 
   useEffect(() => {
     const fetchBookingsData = async () => {
       try {
-        const data: Booking[] = await BookingServices.getBookings();
+        const data: Booking[] = await BookingServices.getBookings(token);
         setBookingsData(
           data.map((b) => {
             return {

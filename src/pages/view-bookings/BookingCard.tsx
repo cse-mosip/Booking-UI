@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   Box,
+  Grid,
   Typography,
   Button,
   IconButton,
@@ -18,10 +19,14 @@ import Collapse from "@mui/material/Collapse";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
+import Chip from "@mui/material/Chip";
+import { green, red, grey } from "@mui/material/colors";
+import { useDispatch, useSelector } from "react-redux";
 
-import { Resource } from "src/types";
-import { Booking } from "src/types";
-import BookingServices from "src/services/BookingServices";
+import { AppState } from "src/redux/reducer";
+import { Booking, Resource, User } from "src/types";
+import { useBookingStatus } from "src/hooks/use-booking/useBookingStatus";
+
 
 const ExpandIndicator = styled(ExpandMoreIcon)(({ theme }) => ({
   transition: theme.transitions.create("transform", {
@@ -38,8 +43,17 @@ interface Props {
 const BookingCard: React.FC<Props> = ({ booking, resource }) => {
   const [expanded, setExpanded] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [status, setStatus] = useState(booking.status);
 
+  const user:User|null = useSelector((state:AppState)=>state.user.user);
+  const token = user.token;
+  const role = user.role;
+
+  //     ADMIN , RESOURCE_MANAGER, RESOURCE_USER
+
+  const { status, loading, handleAccept, handleReject } = useBookingStatus(
+    booking.id,
+    booking.status
+  );
   const handleExpand = () => {
     setExpanded(!expanded);
   };
@@ -54,25 +68,40 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
     setAnchorEl(null);
   };
 
-  const handleAccept = async () => {
-    const updatedBooking = await BookingServices.updateBookingStatus(
-      booking.id,
-      "APPROVED"
-    );
-    setStatus(updatedBooking.data.status);
+  const handleAcceptButtonClick = async () => {
+    await handleAccept();
   };
 
-  const handleReject = async () => {
-    const updatedBooking = await BookingServices.updateBookingStatus(
-      booking.id,
-      "REJECTED"
-    );
-    setStatus(updatedBooking.data.status);
+  const handleRejectButtonClick = async () => {
+    await handleReject();
   };
 
   const handleCardClick = () => {
     setExpanded(!expanded);
   };
+
+  const getStatusColor = () => {
+    switch (status) {
+      case "APPROVED":
+        return green[500];
+      case "REJECTED":
+        return red[500];
+      default:
+        return grey[500];
+    }
+  };
+
+  const calculatePercentage = (requested, maximum) => {
+    return Math.min((requested / maximum) * 100, 100);
+  };
+
+  const formatNumberWithCommas = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const bookedDate = new Date(booking.bookedDate);
+  const startTime = new Date(booking.startTime);
+  const endTime = new Date(booking.endTime);
 
   const openResourcePopover = Boolean(anchorEl);
   const resourcePopoverId = openResourcePopover
@@ -93,68 +122,164 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
           },
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            Booking ID: {booking.id}
-          </Typography>
-          <IconButton
-            onClick={handleExpand}
-            aria-expanded={expanded}
-            sx={{ marginLeft: "auto" }}
-          >
-            <ExpandIndicator
-              style={{
-                transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.3s ease-in-out",
-              }}
-            />
-          </IconButton>
-        </Box>
-        <Tooltip
-          title={
-            <React.Fragment>
-              <Typography color="inherit">{resource.name}</Typography>
-              <em>{"Maximum of"}</em> <b>{resource.count}</b>
-              <em>{" resources can be used"}</em>
-            </React.Fragment>
-          }
-          placement="top"
-        >
-          <Button
-            style={{
-              textDecoration: "underline",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-            onMouseOver={handleResourceIdClick}
-            onMouseOut={handleResourcePopoverClose}
-          >
-            <Typography variant="body2" color="textSecondary">
-              Booked Resource ID: {booking.resource}
+        <Grid container>
+          <Grid item xs={2}>
+            <Typography variant="subtitle1" fontWeight="bold">
+              Booking ID: {booking.id}
             </Typography>
-          </Button>
-        </Tooltip>
+          </Grid>
 
-        <Typography variant="body2" color="textSecondary">
-          Username: {booking.userId}
-        </Typography>
+          <Grid item xs={2}>
+            <Tooltip
+              title={
+                <React.Fragment>
+                  <Typography color="inherit">{resource.name}</Typography>
+                  <em>{"Maximum of"}</em> <b>{resource.count}</b>
+                  <em>{" resources can be used"}</em>
+                </React.Fragment>
+              }
+              placement="top"
+            >
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                style={{
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                }}
+                onMouseOver={handleResourceIdClick}
+                onMouseOut={handleResourcePopoverClose}
+              >
+                Resource ID: {booking.resource}
+              </Typography>
+            </Tooltip>
+          </Grid>
+
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ fontWeight: "bold" }}
+            >
+              Resource Name: {resource.name}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ fontWeight: "bold" }}
+            >
+              User: {booking.userId}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ fontWeight: "bold" }}
+            >
+              Booked on: {bookedDate.toLocaleDateString()}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={2} textAlign="right">
+            <IconButton
+              onClick={handleExpand}
+              aria-expanded={expanded}
+              sx={{ marginLeft: "auto" }}
+            >
+              <ExpandIndicator
+                style={{
+                  transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.3s ease-in-out",
+                }}
+              />
+            </IconButton>
+          </Grid>
+        </Grid>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{ mt: 2, fontWeight: "bold" }}
-          >
-            Resource Name: {resource.name}
-          </Typography>
           <Typography variant="body2" color="textSecondary" fontWeight="bold">
             Reason: {booking.reason}
           </Typography>
-          <Typography variant="body2" color="textSecondary" fontWeight="bold">
-            Requested Resource Count: {booking.count}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" fontWeight="bold">
-            Maximum Count of the Resource: {resource.count}
-          </Typography>
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="textSecondary" fontWeight="bold">
+              Requested Resource Count: {booking.count}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" fontWeight="bold">
+              Maximum Count of the Resource: {resource.count}
+            </Typography>
+            <Box
+              sx={{
+                width: "100%",
+                height: 20,
+                backgroundColor: "#E0E6ED",
+                borderRadius: 10,
+                mt: 1,
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              <Box
+                sx={{
+                  width: `${calculatePercentage(
+                    booking.count,
+                    resource.count
+                  )}%`,
+                  height: "100%",
+                  backgroundColor: green[500],
+                  borderRadius: "inherit",
+                  transition: "width 0.5s ease-in-out",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                }}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  color: "#FFFFFF",
+                  fontWeight: "bold",
+                }}
+              >
+                {`${Math.round(
+                  calculatePercentage(booking.count, resource.count)
+                )}%`}
+              </Box>
+              <Tooltip
+                title={`Requested: ${formatNumberWithCommas(
+                  booking.count
+                )} / Maximum: ${formatNumberWithCommas(resource.count)}`}
+              >
+                <Box
+                  sx={{
+                    width: `${calculatePercentage(
+                      booking.count,
+                      resource.count
+                    )}%`,
+                    height: "100%",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    cursor: "pointer",
+                    transition: "width 0.3s ease-in-out",
+                    "&:hover": {
+                      width: `${
+                        calculatePercentage(booking.count, resource.count) + 5
+                      }%`,
+                      backgroundColor: green[600],
+                    },
+                  }}
+                />
+              </Tooltip>
+            </Box>
+          </Box>
           <TableContainer
             sx={{
               mt: 2,
@@ -173,9 +298,9 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell>{(new Date(booking.bookedDate)).toLocaleDateString()}</TableCell>
-                  <TableCell>{(new Date(booking.startTime)).toLocaleTimeString()}</TableCell>
-                  <TableCell>{(new Date(booking.endTime)).toLocaleTimeString()}</TableCell>
+                  <TableCell>{bookedDate.toLocaleString()}</TableCell>
+                  <TableCell>{startTime.toLocaleString()}</TableCell>
+                  <TableCell>{endTime.toLocaleString()}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -183,13 +308,16 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
         </Collapse>
       </CardContent>
       <CardActions disableSpacing sx={{ paddingTop: 1 }}>
-        {status === "PENDING" ? (
+        {loading ? (
+          <div>Loading...</div>
+        ) : status === "PENDING" ? (
           <Box
             sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}
           >
             <Button
               variant="contained"
-              onClick={handleReject}
+              onClick={handleRejectButtonClick}
+              disabled={role=='RESOURCE_USER'}
               sx={{
                 backgroundColor: "#E53E3E",
                 color: "#FFFFFF",
@@ -203,7 +331,9 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
             </Button>
             <Button
               variant="contained"
-              onClick={handleAccept}
+              onClick={handleAcceptButtonClick}
+              disabled={role=='RESOURCE_USER'}
+
               sx={{
                 ml: 1,
                 backgroundColor: "#38A169",
@@ -218,7 +348,15 @@ const BookingCard: React.FC<Props> = ({ booking, resource }) => {
             </Button>
           </Box>
         ) : (
-          <div>{status}</div>
+          <Box
+            sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}
+          >
+            <Chip
+              label={status}
+              variant="outlined"
+              style={{ color: getStatusColor(), borderColor: getStatusColor() }}
+            />
+          </Box>
         )}
       </CardActions>
     </Card>

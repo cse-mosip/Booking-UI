@@ -66,7 +66,7 @@ export const getMostUsedResources = (
   return sortedResources.slice(0, 3).map(([resource, count]) => ({
     resource,
     count,
-    name: resources.find((r) => r.id == resource).name,
+    name: resources?.find((r) => r.id === resource)?.name ?? null,
   }));
 };
 
