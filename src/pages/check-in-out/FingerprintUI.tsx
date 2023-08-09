@@ -5,7 +5,7 @@ import FingerprintImg from "public/assets/images/fp_3.png";
 import "./fingerprint.css";
 
 export default function FingerprintUi(props: any) {
-  const { resourceName } = props;
+  const { resourceName, requests } = props;
   const navigate = useNavigate();
   const isStudent = true;
 
@@ -43,6 +43,7 @@ export default function FingerprintUi(props: any) {
           variant="contained"
           color="error"
           onClick={() => {
+            requests(false);
             navigate("/viewresources");
           }}
         >

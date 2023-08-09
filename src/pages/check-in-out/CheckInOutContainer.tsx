@@ -12,6 +12,8 @@ import { Box, Container, Paper, Toolbar, Typography } from "@mui/material";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import { createTheme } from "@mui/material/styles";
 import Copyright from "../../components/Copyright";
+import FingerprintService from "../../services/fingerprintService/FingerprintService";
+import FingerprintAuthServices from "../../services/FingerprintAuthServices";
 
 const dashboardTheme = createTheme({
   palette: {
@@ -62,6 +64,30 @@ export default function CheckInOutContainer() {
     fetchResource();
   }, [resourceId]);
 
+  const authenticateFp = async () => {
+    const fingerprintData = await FingerprintService.getFingerprint();
+    // const authenticationData = fingerprintAuthServices.fpAuthenticate(fingerprintData);
+
+    // TODO: Display the result
+  };
+
+  const [sendingRequests, setSendingRequests] = useState(true);
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
+    if (sendingRequests) {
+      intervalId = setInterval(authenticateFp, 100);
+    } else {
+      clearInterval(intervalId);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [sendingRequests]);
+
   return (
     <ThemeProvider theme={dashboardTheme}>
       <CssBaseline />
@@ -71,7 +97,12 @@ export default function CheckInOutContainer() {
         <Container component="main" sx={{ mb: 4 }}>
           <Toolbar />
           <Box sx={{ my: 5 }}>
-            {resource && <FingerprintUi resourceName={resource.name} />}
+            {resource && (
+              <FingerprintUi
+                resourceName={resource.name}
+                requests={setSendingRequests}
+              />
+            )}
             {!resource && (
               <Typography variant="h4">Resource not found.</Typography>
             )}
