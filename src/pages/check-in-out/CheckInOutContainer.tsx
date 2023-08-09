@@ -65,8 +65,16 @@ export default function CheckInOutContainer() {
   }, [resourceId]);
 
   const authenticateFp = async () => {
+    const id = parseInt(resourceId);
+    if (isNaN(id)) {
+      return;
+    }
+
     const fingerprintData = await FingerprintService.getFingerprint();
-    // const authenticationData = fingerprintAuthServices.fpAuthenticate(fingerprintData);
+    const authenticationData = FingerprintAuthServices.fpAuthenticate(
+      id,
+      fingerprintData
+    );
 
     // TODO: Display the result
   };
@@ -75,7 +83,7 @@ export default function CheckInOutContainer() {
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
 
-    if (sendingRequests) {
+    if (sendingRequests && resource) {
       intervalId = setInterval(authenticateFp, 100);
     } else {
       clearInterval(intervalId);
