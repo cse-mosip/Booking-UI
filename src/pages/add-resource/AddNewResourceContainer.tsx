@@ -9,8 +9,8 @@ import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import React, { useState, useEffect } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import AppbarComponent from "src/components/AppbarComponent";
 import Copyright from "src/components/Copyright";
 import DrawerComponent from "src/components/DrawerComponent";
@@ -51,24 +51,8 @@ const resourceCountValidationSchema = yup.object({
 });
 
 export default function AddNewResourceContainer() {
-  const navigate = useNavigate();
-  const user: User | null = useSelector(
-    (state: AppState) => state.user.user
-  );
+  const user: User | null = useSelector((state: AppState) => state.user.user);
 
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/");
-    }
-  
-    if (user.role === "RESOURCE_USER") {
-      navigate("/dashboard");
-    }
-  }, [])
-  
-
-  
   const [activeStep, setActiveStep] = React.useState(0);
   const [resourceName, setResourceName] = useState("");
   const [resourceCount, setResourceCount] = useState(1);
