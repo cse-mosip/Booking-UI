@@ -71,31 +71,44 @@ export default function CheckInOutContainer() {
     }
 
     const fingerprintData = await FingerprintService.getFingerprint();
-    const authenticationData = FingerprintAuthServices.fpAuthenticate(
-      id,
-      fingerprintData,
-      user.token
-    );
+
+    const fpRead = false; // TODO: Check whether fingerprint has been read
+    if (fpRead) {
+      const authenticationData = FingerprintAuthServices.fpAuthenticate(
+        id,
+        fingerprintData,
+        user.token
+      );
+    }
 
     // TODO: Display the result
   };
 
-  const [sendingRequests, setSendingRequests] = useState(true);
+  const [sendingRequests, setSendingRequests] = useState(false);
+  const [fpImageClasses, setFpImageClasses] = useState("");
+
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
 
     if (sendingRequests && resource) {
+      setFpImageClasses("fingerprint-animation");
       intervalId = setInterval(authenticateFp, 100);
     } else {
+      setFpImageClasses("");
       clearInterval(intervalId);
     }
 
     return () => {
       if (intervalId) {
+        setFpImageClasses("");
         clearInterval(intervalId);
       }
     };
-  }, [sendingRequests]);
+  }, [sendingRequests, resource]);
+
+  const toggleRequest = () => {
+    setSendingRequests(!sendingRequests);
+  };
 
   return (
     <ThemeProvider theme={dashboardTheme}>
@@ -109,7 +122,8 @@ export default function CheckInOutContainer() {
             {resource && (
               <FingerprintUi
                 resourceName={resource.name}
-                requests={setSendingRequests}
+                toggleRequest={toggleRequest}
+                fpClass={fpImageClasses}
               />
             )}
             {!resource && (

@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 import { Box, Button, Typography, useTheme } from "@mui/material";
 import FingerprintImg from "public/assets/images/fp_3.png";
 import "./fingerprint.css";
 
 export default function FingerprintUi(props: any) {
-  const { resourceName, requests } = props;
-  const navigate = useNavigate();
+  const { resourceName, fpClass, toggleRequest } = props;
   const isStudent = true;
 
   const theme = useTheme();
@@ -30,24 +28,23 @@ export default function FingerprintUi(props: any) {
         variant="h3"
         sx={{ ...headingStyle, color: "#0170D6" } as React.CSSProperties}
       >
-        Please place your finger on the scanner
+        {fpClass
+          ? "Please place your finger on the scanner"
+          : "Please click Start Attending button to start"}
       </Typography>
       <img
         src={FingerprintImg}
         alt="fingerprint image"
         style={{ margin: "10%" }}
-        className="fingerprint-animation"
+        className={fpClass}
       />
       {isStudent && (
         <Button
           variant="contained"
-          color="error"
-          onClick={() => {
-            requests(false);
-            navigate("/viewresources");
-          }}
+          color={fpClass ? "error" : "success"}
+          onClick={toggleRequest}
         >
-          STOP ATTENDING
+          {fpClass ? "Stop Attending" : "Start Attending"}
         </Button>
       )}
     </Box>
