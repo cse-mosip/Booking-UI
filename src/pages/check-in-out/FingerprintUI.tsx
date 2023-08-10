@@ -1,10 +1,10 @@
-import React from "react";
 import { Box, Button, Typography, useTheme } from "@mui/material";
 import FingerprintImg from "public/assets/images/fp_3.png";
+import React from "react";
 import "./fingerprint.css";
 
 export default function FingerprintUi(props: any) {
-  const { resourceName, fpClass, toggleRequest } = props;
+  const { resourceName, scannerActive, requestFingerprint } = props;
   const isStudent = true;
 
   const theme = useTheme();
@@ -24,27 +24,20 @@ export default function FingerprintUi(props: any) {
       >
         {resourceName}
       </Typography>
-      <Typography
-        variant="h3"
-        sx={{ ...headingStyle, color: "#0170D6" } as React.CSSProperties}
-      >
-        {fpClass
-          ? "Please place your finger on the scanner"
-          : "Please click Start Attending button to start"}
-      </Typography>
       <img
         src={FingerprintImg}
         alt="fingerprint image"
         style={{ margin: "10%" }}
-        className={fpClass}
+        className={scannerActive ? "fingerprint-animation" : ""}
       />
       {isStudent && (
         <Button
           variant="contained"
-          color={fpClass ? "error" : "success"}
-          onClick={toggleRequest}
+          color={scannerActive ? "info" : "success"}
+          onClick={requestFingerprint}
+          disabled={scannerActive}
         >
-          {fpClass ? "Stop Attending" : "Start Attending"}
+          {scannerActive ? "Waiting for fingerprint..." : "Check in"}
         </Button>
       )}
     </Box>

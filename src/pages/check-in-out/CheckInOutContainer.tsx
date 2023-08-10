@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Resource, User } from "../../types";
-import ResourcesServices from "../../services/ResourcesServices";
-import { useSelector } from "react-redux";
-import { AppState } from "../../redux/reducer";
-import FingerprintUi from "./FingerprintUI";
+import { Box, Container, Toolbar, Typography } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
-import AppbarComponent from "../../components/AppbarComponent";
-import DrawerComponent from "../../components/DrawerComponent";
-import { Box, Container, Paper, Toolbar, Typography } from "@mui/material";
-import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import { createTheme } from "@mui/material/styles";
+import ThemeProvider from "@mui/material/styles/ThemeProvider";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import AppbarComponent from "../../components/AppbarComponent";
 import Copyright from "../../components/Copyright";
-import FingerprintService from "../../services/fingerprintService/FingerprintService";
+import DrawerComponent from "../../components/DrawerComponent";
+import { socket } from "../../helpers/socket";
+import { AppState } from "../../redux/reducer";
 import FingerprintAuthServices from "../../services/FingerprintAuthServices";
+import ResourcesServices from "../../services/ResourcesServices";
+import { Resource, User } from "../../types";
+import FingerprintUi from "./FingerprintUI";
 
 const dashboardTheme = createTheme({
   palette: {
@@ -64,51 +64,29 @@ export default function CheckInOutContainer() {
     fetchResource();
   }, [resourceId]);
 
-  const authenticateFp = async () => {
-    const id = parseInt(resourceId);
-    if (isNaN(id)) {
-      return;
-    }
-
-    const fingerprintData = await FingerprintService.getFingerprint();
-
-    const fpRead = false; // TODO: Check whether fingerprint has been read
-    if (fpRead) {
-      const authenticationData = FingerprintAuthServices.fpAuthenticate(
-        id,
-        fingerprintData,
-        user.token
-      );
-    }
-
-    // TODO: Display the result
-  };
-
-  const [sendingRequests, setSendingRequests] = useState(false);
-  const [fpImageClasses, setFpImageClasses] = useState("");
-
   useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null;
+    if (resource === null) return;
+    socket.on("fingerprintData", async (fingerprintData) => {
+      const authenticationData: any =
+        await FingerprintAuthServices.fpAuthenticate(
+          parseInt(resource.id),
+          fingerprintData,
+          user.token
+        );
+      console.log(authenticationData);
+      const { username } = authenticationData.data;
+      console.log(username);
+      setScannerActive(false);
+      // TODO: Display the result
+    });
+  }, [resource]);
 
-    if (sendingRequests && resource) {
-      setFpImageClasses("fingerprint-animation");
-      intervalId = setInterval(authenticateFp, 100);
-    } else {
-      setFpImageClasses("");
-      clearInterval(intervalId);
-    }
+  const [scannerActive, setScannerActive] = useState(false);
 
-    return () => {
-      if (intervalId) {
-        setFpImageClasses("");
-        clearInterval(intervalId);
-      }
-    };
-  }, [sendingRequests, resource]);
-
-  const toggleRequest = () => {
-    setSendingRequests(!sendingRequests);
-  };
+  function requestFingerprint() {
+    setScannerActive(true);
+    socket.emit("fingerprint", 3);
+  }
 
   return (
     <ThemeProvider theme={dashboardTheme}>
@@ -122,8 +100,8 @@ export default function CheckInOutContainer() {
             {resource && (
               <FingerprintUi
                 resourceName={resource.name}
-                toggleRequest={toggleRequest}
-                fpClass={fpImageClasses}
+                scannerActive={scannerActive}
+                requestFingerprint={requestFingerprint}
               />
             )}
             {!resource && (

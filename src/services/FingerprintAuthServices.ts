@@ -13,7 +13,7 @@ const fpAuthenticate = async (
   try {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.patch("/bookings", data);
-    return response;
+    return response.data;
   } catch (error) {
     return error;
   }
