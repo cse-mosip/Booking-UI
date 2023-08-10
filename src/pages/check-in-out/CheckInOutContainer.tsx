@@ -73,7 +73,8 @@ export default function CheckInOutContainer() {
     const fingerprintData = await FingerprintService.getFingerprint();
     const authenticationData = FingerprintAuthServices.fpAuthenticate(
       id,
-      fingerprintData
+      fingerprintData,
+      user.token
     );
 
     // TODO: Display the result
