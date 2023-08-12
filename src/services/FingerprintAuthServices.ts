@@ -14,8 +14,11 @@ const fpAuthenticate = async (
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.patch("/bookings", data);
     return response.data;
-  } catch (error) {
-    return null;
+  } catch (error:any) {
+    if(error.response.status){
+      throw new Error('400');
+    }
+    throw new Error('unknown');
   }
 };
 

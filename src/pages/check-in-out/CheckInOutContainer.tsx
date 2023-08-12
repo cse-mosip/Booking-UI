@@ -75,13 +75,15 @@ export default function CheckInOutContainer() {
   useEffect(() => {
     if (resource === null) return;
     socket.on("fingerprintData", async (fingerprintData) => {
+      try {
+
       const authenticationData: any =
         await FingerprintAuthServices.fpAuthenticate(
           parseInt(resource.id),
           fingerprintData,
           user.token
         );
-      if (authenticationData) {
+
         const {username, startTime, endTime, count} = authenticationData.data;
 
         dayjs.extend(localizedFormat);
@@ -95,19 +97,23 @@ export default function CheckInOutContainer() {
         setAccess(true);
         setScannerActive(false);
         setDialogOpen(true);
-      } else {
+      }catch (error:any){
         setAccess(false);
-        setDialogOpen(true);
+        if(error.message==='400'){
+          setDialogOpen(true);
+        }else{
+          setDialogOpen(false);
+        }
       }
 
       setTimeout(
         () => {
+          setDialogOpen(false);
           setScannerActive(false);
-          setBooking(null);
-          setAccess(false)
-          setDialogOpen(false)
+          // setBooking(null);
+          // setAccess(false);
         }, 5000
-      )
+      );
 
 
     });
