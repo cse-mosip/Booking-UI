@@ -345,7 +345,7 @@ export default function ViewResourcesContainer() {
           </Box>
           <Box sx={{mt: 4}}>
             <Typography variant="body2" color="text.secondary" align="center">
-              © {new Date().getFullYear()} MOSIP
+              © {new Date().getFullYear()} CSE
             </Typography>
           </Box>
         </Container>
