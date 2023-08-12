@@ -20,6 +20,7 @@ import resourcesServices from "src/services/ResourcesServices";
 import {Booking, Resource, User} from "../../types";
 import {useSelector} from "react-redux";
 import {AppState} from "../../redux/reducer";
+import Grid from "@mui/material/Grid";
 
 const dashboardTheme = createTheme({
   palette: {
@@ -91,14 +92,14 @@ function ResourceCard({resource}: { resource: Resource }) {
     setExpanded(!expanded);
   };
 
-  const handleEditStart = (e: any) => {
+  const handleEditStart = () => {
     setExpanded(false);
     setName(resource.name);
     setCount(resource.count)
     setEditStarted(true);
   };
 
-  const handleUpdate = async (e: any) => {
+  const handleUpdate = async () => {
     if (!nameError && !countError) {
       await resourcesServices.updateResource(parseInt(resource.id), name, count,token);
       setEditStarted(false);
@@ -189,14 +190,26 @@ function ResourceCard({resource}: { resource: Resource }) {
         >
           {
             !editStarted ? (
-              <Button
-                disabled={role!='ADMIN'}
-                variant="contained"
-                onClick={handleEditStart}
-                sx={{backgroundColor: "green", color: "white"}}
-              >
-                Edit Resource
-              </Button>
+              <Grid container direction={'row'} spacing={1} justifyContent={'end'}>
+                <Grid item>
+                  <Button
+                    disabled={role!='ADMIN'}
+                    variant="contained"
+                    sx={{backgroundColor: "primary", color: "white"}}
+                  ><a style={{textDecoration:"none", color:"white"}} href={`resources/${resource.id}/check-in-out`}>Check-ins</a></Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    disabled={role!='ADMIN'}
+                    variant="contained"
+                    onClick={handleEditStart}
+                    sx={{backgroundColor: "green", color: "white"}}
+                  >
+                    Edit Resource
+                  </Button>
+                </Grid>
+              </Grid>
+
             ) : (
               <Button
                 variant="contained"
@@ -211,7 +224,7 @@ function ResourceCard({resource}: { resource: Resource }) {
           {
             editStarted && (
               <Button onClick={
-                (e) => {
+                () => {
                   setEditStarted(false);
                 }
               }>Cancel</Button>

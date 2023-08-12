@@ -15,7 +15,6 @@ const fpAuthenticate = async (
     const response = await axios.patch("/bookings", data);
     return response.data;
   } catch (error) {
-    console.error(error);
     return null;
   }
 };

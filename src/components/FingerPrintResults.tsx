@@ -8,6 +8,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import Grid from "@mui/material/Grid";
 import {FingerPrintDetails, SetDialogOpenFunction} from "../types";
+import FingerPrintFailed from '../../public/assets/images/fingerprint_failed.jpg'
+import FingerPrintSuccess from '../../public/assets/images/fingerprint_success.jpg'
 
 const BootstrapDialog = styled(Dialog)(({theme}) => ({
   '& .MuiDialogContent-root': {
@@ -77,19 +79,20 @@ export const FingerPrintResults = ({
               <>
                 <Grid container direction={'column'} alignItems={'center'} justifyContent={'center'}>
                   <img style={{borderRadius: '50%'}}
-                       src={window.location.origin + '/assets/images/fingerprint_success.jpg'}
+                       src={FingerPrintSuccess}
                        alt={'fingerprint success'}/>
                 </Grid>
-                <Grid container direction={"column"} alignItems={'center'} justifyContent={'center'}>
-                <Typography variant={"h6"} color={'green'} fontWeight={'bold'}>
-                  Successfully Recognized
-                </Typography>
+                <Grid mt={1} container direction={"column"} alignItems={'center'} justifyContent={'center'}>
+                  <Typography variant={"h6"} color={'green'} fontWeight={'bold'}>
+                    Successfully Recognized
+                  </Typography>
 
                   <Typography variant={'h4'} fontWeight={"bold"}>
                     {booking.username}
                   </Typography>
                 </Grid>
-                <Grid mt={2} spacing={2} container direction={"row"} alignItems={'center'} justifyContent={'space-between'}>
+                <Grid mt={2} spacing={2} container direction={"row"} alignItems={'center'}
+                      justifyContent={'space-between'}>
                   <Grid item>
                     <Typography variant={'body2'}>
                       {booking.timeslot}
@@ -108,7 +111,7 @@ export const FingerPrintResults = ({
               <>
                 <Grid container direction={'column'} alignItems={'center'} justifyContent={'center'}>
                   <img style={{borderRadius: '50%'}}
-                       src={window.location.origin + '/assets/images/fingerprint_failed.jpg'}
+                       src={FingerPrintFailed}
                        alt={'fingerprint success'}/>
                 </Grid>
                 <Typography gutterBottom variant={"h6"} color={'red'} mt={1}>
