@@ -12,8 +12,12 @@ import { socket } from "../../helpers/socket";
 import { AppState } from "../../redux/reducer";
 import FingerprintAuthServices from "../../services/FingerprintAuthServices";
 import ResourcesServices from "../../services/ResourcesServices";
-import { Resource, User } from "../../types";
+import {FingerPrintDetails, Resource, User} from "../../types";
 import FingerprintUi from "./FingerprintUI";
+import {FingerPrintResults} from "../../components/FingerPrintResults";
+import dayjs from "dayjs";
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+
 
 const dashboardTheme = createTheme({
   palette: {
@@ -31,6 +35,10 @@ export default function CheckInOutContainer() {
   const user: User | null = useSelector((state: AppState) => state.user.user);
   const { resourceId } = useParams();
   const navigate = useNavigate();
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [access, setAccess] = useState(false);
+  const [booking, setBooking] = useState<FingerPrintDetails|null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -73,11 +81,34 @@ export default function CheckInOutContainer() {
           fingerprintData,
           user.token
         );
-      console.log(authenticationData);
-      const { username } = authenticationData.data;
-      console.log(username);
-      setScannerActive(false);
-      // TODO: Display the result
+      if(authenticationData){
+        const { username,startTime,endTime,count } = authenticationData.data;
+
+        dayjs.extend(localizedFormat);
+        const booking:FingerPrintDetails = {
+          username,
+          count,
+          timeslot:dayjs(startTime).format('L LT')+'-'+dayjs(endTime).format('LT')
+        }
+        setBooking(booking);
+
+        setAccess(true);
+        setScannerActive(false);
+        setDialogOpen(true);
+      }else {
+        setAccess(false);
+        setDialogOpen(true);
+      }
+
+      setTimeout(
+        ()=>{
+          setBooking(null);
+          setAccess(false)
+          setDialogOpen(false)
+        },5000
+      )
+
+
     });
   }, [resource]);
 
@@ -87,6 +118,9 @@ export default function CheckInOutContainer() {
     setScannerActive(true);
     socket.emit("fingerprint", 3);
   }
+
+
+
 
   return (
     <ThemeProvider theme={dashboardTheme}>
@@ -98,15 +132,26 @@ export default function CheckInOutContainer() {
           <Toolbar />
           <Box sx={{ my: 5 }}>
             {resource && (
+              <>
               <FingerprintUi
                 resourceName={resource.name}
                 scannerActive={scannerActive}
                 requestFingerprint={requestFingerprint}
               />
+                <FingerPrintResults
+                  open={dialogOpen}
+                  setOpen={setDialogOpen}
+                  access={access}
+                  booking={booking}
+                />
+
+              </>
+
             )}
             {!resource && (
               <Typography variant="h4">Resource not found.</Typography>
             )}
+
           </Box>
           <Copyright />
         </Container>
