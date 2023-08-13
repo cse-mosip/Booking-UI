@@ -1,3 +1,5 @@
+import * as React from "react";
+
 export type Resource = {
     id: string;
     name: string;
@@ -46,3 +48,11 @@ export type BookingForm = {
 export const ADMIN = 'ADMIN';
 export const RESOURCE_MANAGER = 'RESOURCE_MANAGER';
 export const RESOURCE_USER = 'RESOURCE_USER';
+
+export type SetDialogOpenFunction = React.Dispatch<React.SetStateAction<boolean>>;
+export type FingerPrintDetails = {
+    username: string,
+    count: number,
+    timeslot: string,
+
+}

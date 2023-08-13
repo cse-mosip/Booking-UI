@@ -1,11 +1,11 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "../pages/layout/Dashboard";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AddNewResourceContainer from "src/pages/add-resource/AddNewResourceContainer";
+import LoginContainer from "src/pages/auth/LoginContainer";
+import CheckInOutContainer from "src/pages/check-in-out/CheckInOutContainer";
 import BookingContainer from "src/pages/create-booking/BookingContainer";
 import ViewBookingsContainer from "src/pages/view-bookings/ViewBookingsContainer";
-import AddNewResourceContainer from "src/pages/add-resource/AddNewResourceContainer";
 import ViewResourcesContainer from "src/pages/view-resources/ViewResourcesContainer";
-import LoginContainer from "src/pages/auth/LoginContainer";
+import Dashboard from "../pages/layout/Dashboard";
 import ProtectedRoute from "./protectedRoute";
 
 const AppRoutes = () => {
@@ -53,6 +53,18 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="resources">
+          <Route path=":resourceId">
+            <Route
+              path="check-in-out"
+              element={
+                <ProtectedRoute permissions={["RESOURCE_MANAGER", "ADMIN"]}>
+                  <CheckInOutContainer />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );
