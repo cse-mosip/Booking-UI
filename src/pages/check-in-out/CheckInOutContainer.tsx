@@ -110,8 +110,6 @@ export default function CheckInOutContainer() {
         () => {
           setDialogOpen(false);
           setScannerActive(false);
-          // setBooking(null);
-          // setAccess(false);
         }, 5000
       );
 
