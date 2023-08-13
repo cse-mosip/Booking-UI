@@ -196,7 +196,11 @@ function ResourceCard({resource}: { resource: Resource }) {
                     disabled={role!='ADMIN'}
                     variant="contained"
                     sx={{backgroundColor: "primary", color: "white"}}
-                  ><a style={{textDecoration:"none", color:"white"}} href={`resources/${resource.id}/check-in-out`}>Check-ins</a></Button>
+                  >
+                    <RouterLink style={{textDecoration:"none", color:"white"}} to={`/resources/${resource.id}/check-in-out`}>
+                      Check-ins
+                    </RouterLink>
+                  </Button>
                 </Grid>
                 <Grid item>
                   <Button
