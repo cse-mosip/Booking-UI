@@ -1,19 +1,23 @@
-import { Box, Container, Toolbar, Typography } from "@mui/material";
+import {Box, Container, Toolbar, Typography} from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
-import { createTheme } from "@mui/material/styles";
+import {createTheme} from "@mui/material/styles";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
 import AppbarComponent from "../../components/AppbarComponent";
 import Copyright from "../../components/Copyright";
 import DrawerComponent from "../../components/DrawerComponent";
-import { socket } from "../../helpers/socket";
-import { AppState } from "../../redux/reducer";
+import {socket} from "../../helpers/socket";
+import {AppState} from "../../redux/reducer";
 import FingerprintAuthServices from "../../services/FingerprintAuthServices";
 import ResourcesServices from "../../services/ResourcesServices";
-import { Resource, User } from "../../types";
+import {FingerPrintDetails, Resource, User} from "../../types";
 import FingerprintUi from "./FingerprintUI";
+import {FingerPrintResults} from "../../components/FingerPrintResults";
+import dayjs from "dayjs";
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+
 
 const dashboardTheme = createTheme({
   palette: {
@@ -29,8 +33,12 @@ const dashboardTheme = createTheme({
 export default function CheckInOutContainer() {
   const [resource, setResource] = useState<Resource | null>(null);
   const user: User | null = useSelector((state: AppState) => state.user.user);
-  const { resourceId } = useParams();
+  const {resourceId} = useParams();
   const navigate = useNavigate();
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [access, setAccess] = useState(false);
+  const [booking, setBooking] = useState<FingerPrintDetails | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -67,17 +75,45 @@ export default function CheckInOutContainer() {
   useEffect(() => {
     if (resource === null) return;
     socket.on("fingerprintData", async (fingerprintData) => {
+      try {
+
       const authenticationData: any =
         await FingerprintAuthServices.fpAuthenticate(
           parseInt(resource.id),
           fingerprintData,
           user.token
         );
-      console.log(authenticationData);
-      const { username } = authenticationData.data;
-      console.log(username);
-      setScannerActive(false);
-      // TODO: Display the result
+
+        const {username, startTime, endTime, count} = authenticationData.data;
+
+        dayjs.extend(localizedFormat);
+        const booking: FingerPrintDetails = {
+          username,
+          count,
+          timeslot: dayjs(startTime).format('L LT') + '-' + dayjs(endTime).format('LT')
+        }
+        setBooking(booking);
+
+        setAccess(true);
+        setScannerActive(false);
+        setDialogOpen(true);
+      }catch (error:any){
+        setAccess(false);
+        if(error.message==='400'){
+          setDialogOpen(true);
+        }else{
+          setDialogOpen(false);
+        }
+      }
+
+      setTimeout(
+        () => {
+          setDialogOpen(false);
+          setScannerActive(false);
+        }, 5000
+      );
+
+
     });
   }, [resource]);
 
@@ -88,27 +124,38 @@ export default function CheckInOutContainer() {
     socket.emit("fingerprint", 3);
   }
 
+
   return (
     <ThemeProvider theme={dashboardTheme}>
-      <CssBaseline />
-      <Box sx={{ display: "flex" }}>
-        <AppbarComponent open={open} toggleDrawer={toggleDrawer} />
-        <DrawerComponent open={open} toggleDrawer={toggleDrawer} />
-        <Container component="main" sx={{ mb: 4 }}>
-          <Toolbar />
-          <Box sx={{ my: 5 }}>
+      <CssBaseline/>
+      <Box sx={{display: "flex"}}>
+        <AppbarComponent open={open} toggleDrawer={toggleDrawer}/>
+        <DrawerComponent open={open} toggleDrawer={toggleDrawer}/>
+        <Container component="main" sx={{mb: 4}}>
+          <Toolbar/>
+          <Box sx={{my: 5}}>
             {resource && (
-              <FingerprintUi
-                resourceName={resource.name}
-                scannerActive={scannerActive}
-                requestFingerprint={requestFingerprint}
-              />
+              <>
+                <FingerprintUi
+                  resourceName={resource.name}
+                  scannerActive={scannerActive}
+                  requestFingerprint={requestFingerprint}
+                />
+                <FingerPrintResults
+                  open={dialogOpen}
+                  setOpen={setDialogOpen}
+                  access={access}
+                  booking={booking}
+                />
+              </>
+
             )}
             {!resource && (
               <Typography variant="h4">Resource not found.</Typography>
             )}
+
           </Box>
-          <Copyright />
+          <Copyright/>
         </Container>
       </Box>
     </ThemeProvider>
