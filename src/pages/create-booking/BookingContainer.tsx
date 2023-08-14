@@ -24,7 +24,7 @@ import DrawerComponent from "src/components/DrawerComponent";
 import { formatDate } from "src/helpers/utils";
 import { AppState } from "src/redux/reducer";
 import bookingService from "src/services/BookingServices";
-import { Resource, User } from "src/types";
+import { User } from "src/types";
 import * as yup from "yup";
 import ResourceSelectionForm from "./ResourceSelectionForm";
 import Review from "./Review";
@@ -32,7 +32,7 @@ import Review from "./Review";
 const steps = ["Select Resource", "Review your booking"];
 
 const form1ValidationSchema = yup.object({
-  ResourceName: yup.string().required("Resource is required"),
+  resourceId: yup.string().required("Resource is required"),
   reason: yup.string().notRequired(),
   occupants: yup
     .number()
@@ -68,9 +68,6 @@ export default function BookingContainer() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [loader, setLoader] = useState(false);
-  const resources: Resource[] | null = useSelector(
-    (state: AppState) => state.resources.resources
-  );
   const user: User | null = useSelector((state: AppState) => state.user.user);
 
   const today = new Date();
@@ -109,7 +106,6 @@ export default function BookingContainer() {
       formValues['startDateTime'] = formatDate(formValues.bookingStartTime);
       formValues['endDateTime'] = formatDate(formValues.bookingEndTime);
       formValues['count'] = formValues.occupants;
-      formValues['resourceId'] = String((resources.find((item) => item.name === formValues.ResourceName)).id);
       formValues['username'] = user.username;
 
       const token = user.token;
