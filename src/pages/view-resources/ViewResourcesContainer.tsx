@@ -17,7 +17,7 @@ import {Link as RouterLink} from "react-router-dom";
 import AppbarComponent from "src/components/AppbarComponent";
 import DrawerComponent from "src/components/DrawerComponent";
 import resourcesServices from "src/services/ResourcesServices";
-import {Booking, Resource, User} from "../../types";
+import {ADMIN, Booking, RESOURCE_MANAGER, Resource, User} from "../../types";
 import {useSelector} from "react-redux";
 import {AppState} from "../../redux/reducer";
 import Grid from "@mui/material/Grid";
@@ -193,7 +193,7 @@ function ResourceCard({resource}: { resource: Resource }) {
               <Grid container direction={'row'} spacing={1} justifyContent={'end'}>
                 <Grid item>
                   <Button
-                    disabled={role!='ADMIN'}
+                    disabled={role !== ADMIN && role !== RESOURCE_MANAGER}
                     variant="contained"
                     sx={{backgroundColor: "primary", color: "white"}}
                   >
