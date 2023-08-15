@@ -27,39 +27,6 @@ interface Option {
   label: string;
 }
 
-// const bookedSlots = [
-//     {
-//       "id": 12,
-//       "resourceId": 14,
-//       "username": 168,
-//       "reason": "HCI Lecture",
-//       "count": 40,
-//       "startDateTime": "2023-07-11T09:00:00",
-//       "endDateTime": "2023-07-11T10:30:00",
-//       "status": "APPROVED"
-//     },
-//     {
-//       "id": 12,
-//       "resourceId": 14,
-//       "username": 168,
-//       "reason": "HCI Lecture",
-//       "count": 40,
-//       "startDateTime": "2023-07-11T12:00:00",
-//       "endDateTime": "2023-07-11T13:40:00",
-//       "status": "APPROVED"
-//     },
-//     {
-//       "id": 12,
-//       "resourceId": 14,
-//       "username": 168,
-//       "reason": "HCI Lecture",
-//       "count": 40,
-//       "startDateTime": "2023-07-11T18:27:00",
-//       "endDateTime": "2023-07-11T19:56:34",
-//       "status": "APPROVED"
-//     }
-//   ];
-
 export default function ResourceSelectionForm(
   props: ResourceSelectionFormProps
 ) {
@@ -106,19 +73,16 @@ export default function ResourceSelectionForm(
     }
   };
 
-  const checkAvailability = async (date: any) => {
+  const checkAvailability = async (resourceId:number,date: any) => {
     setFlagForBookingDate(true);
     setLoader(true);
-    if (props.formik.values.ResourceName && date) {
+    if (resourceId && date) {
       props.formik.values.bookingDate = date;
-      const resourceId = resources.find(
-        (item) => item.name === props.formik.values.ResourceName
-      ).id;
       const dateString = formatDate(date);
       setErrorInBookedSlots(null);
       const token = user.token;
       const response = await bookingService.getBookedTimeSlots(
-        resourceId,
+        resourceId.toString(),
         dateString,
         token,
       );
@@ -150,26 +114,34 @@ export default function ResourceSelectionForm(
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <TextField
-            id="ResourceName"
-            name="ResourceName"
+            id="resourceId"
+            name="resourceId"
             label="Select the Resource you want to book"
             fullWidth
             autoComplete="shipping address-line1"
             variant="standard"
             select
-            value={props.formik.values.ResourceName}
-            onChange={props.formik.handleChange}
+            value={props.formik.values.resourceId}
+            onChange={
+              async (event) => {
+                const resourceId = parseInt(event.target.value);
+                const selectedResource = options.find(option => option.id === resourceId);
+                props.formik.setFieldValue('resourceId', selectedResource.id);
+                props.formik.setFieldValue('ResourceName', selectedResource.value);
+                await checkAvailability(resourceId,dayjs());
+              }
+            }
             error={
-              props.formik.touched.ResourceName &&
-              Boolean(props.formik.errors.ResourceName)
+              props.formik.touched.resourceId &&
+              Boolean(props.formik.errors.resourceId)
             }
             helperText={
-              props.formik.touched.ResourceName &&
-              props.formik.errors.ResourceName
+              props.formik.touched.resourceId &&
+              props.formik.errors.resourceId
             }
           >
             {options.map((option) => (
-              <MenuItem key={option.id} value={option.value}>
+              <MenuItem key={option.id} value={option.id}>
                 {option.label}
               </MenuItem>
             ))}
@@ -212,7 +184,7 @@ export default function ResourceSelectionForm(
                 />
               )}
               value={props.formik.values.bookingDate}
-              onChange={(newValue) => checkAvailability(newValue)}
+              onChange={(newValue) => checkAvailability(props.formik.values.resourceId,newValue)}
               defaultValue={dayjs()}
               disablePast
             />
