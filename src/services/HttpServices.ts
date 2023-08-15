@@ -12,7 +12,7 @@ const axiosInstance = Axios.create({
 axiosInstance.interceptors.response.use((response) => {
     return response;
 }, (error) => {
-    if ([403].includes(error?.response?.status)) {
+    if ([401].includes(error?.response?.status)) {
         ToasterMessage.errorMessage({
             error: error,
             custom_message: "Your session has expired. Please login again."
@@ -23,11 +23,6 @@ axiosInstance.interceptors.response.use((response) => {
             error: error,
             custom_message: error.response.data.message
         }) 
-    }
-    else{
-        ToasterMessage.errorMessage({
-            error: error,
-        });
     }
     return Promise.reject(error);
 });

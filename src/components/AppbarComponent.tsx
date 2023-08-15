@@ -39,12 +39,16 @@ const AppBar = styled(MuiAppBar, {
 export default function AppbarComponent({ open, toggleDrawer }) {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user: User | null = useSelector((state: AppState) => state.user.user);
   const token = user.token;
   
   const handleLogout = async () => {
-    await authServices.logout(token);
-    dispatch(removeUser());
+    const isLogOut = await authServices.logout(token);
+    if(isLogOut){
+      dispatch(removeUser());
+      navigate("/");
+    }
   };
 
   return (

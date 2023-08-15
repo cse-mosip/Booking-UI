@@ -35,7 +35,7 @@ const logout = async (token: string) => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const response = await axios.post("/auth/logout", data);
     if(response.status === 200 || response.status === 202){
-      window.location.href = '/'
+      return true;
     }
   } catch (error) {
     ToasterMessage.errorMessage({
